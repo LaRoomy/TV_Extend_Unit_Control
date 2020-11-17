@@ -16,7 +16,7 @@
 #define		POSITION_UNDEFINED	0
 #define		FRONT_POSITION		1
 #define		MID_POSITION		2
-#define		BACK_POSTION		3
+#define		BACK_POSITION		3
 #define		ERROR_POSITION		8
 #define		SENSOR_ERROR		255
 

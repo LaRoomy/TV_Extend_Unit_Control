@@ -38,7 +38,17 @@ int main(void)
 				switch_preventer = TRUE;
 				// TODO: schedule a timer and set the preventer to false after a short period !!!!!!!!!!!
 
-				pc1_enable(2);
+				//pc1_enable(2);
+				
+				//move_tilt_drive(MOVE_IN);
+				
+				//util_tiltdrive_front();
+				
+				if(current_drive_mode == DRIVEMODE_NONE)
+				{
+					TV_Unit_Drive_basedOnPosition();
+				}
+				
 				
 				longDelay(200);// delete???
 			}
@@ -46,6 +56,18 @@ int main(void)
 
 		// control drive
 		control_drive();
+		
+		
+		
+		//uint8_t pos = linear_drive_check_position();
+		//if(pos == FRONT_POSITION)
+		//{
+			//pc1_enable(TRUE);
+		//}
+		//else
+		//{
+			//pc1_enable(FALSE);
+		//}
 
     }
 }
