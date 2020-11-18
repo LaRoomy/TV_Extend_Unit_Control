@@ -11,7 +11,6 @@
 
 #include <avr/io.h>
 
-
 #define FALSE	0
 #define TRUE	1
 
@@ -23,11 +22,35 @@ typedef uint8_t BOOL;
 #include "TEUC PPDef.h"
 #include "Movement Control/tvUnitDriver.h"
 
+#include "Atmega324 specific/atmega324_timer.h"
+
 BOOL switch_preventer;
 
 void InitControlParameter()
 {
 	switch_preventer = FALSE;
+}
+
+// check if the doors are closed
+BOOL checkDoorSensor()
+{
+	// PORTC0 == 1 -> doors are closed
+	// PORTC0 == 0 -> one or more doors are open
+	if(!(DOOR_SENSOR_PIN & (1<<DOOR_SENSOR)))
+	{
+		return FALSE;
+	}
+	else
+	{
+		return TRUE;
+	}
+}
+
+
+BOOL checkDrivePreconditions()
+{
+	// check all conditions which must be fulfilled to start the drive
+	return checkDoorSensor();
 }
 
 

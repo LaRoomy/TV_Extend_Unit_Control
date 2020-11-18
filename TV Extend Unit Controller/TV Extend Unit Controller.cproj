@@ -120,6 +120,9 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Atmega324 specific\atmega324_timer.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="General\BitUtilitiesEx.h">
       <SubType>compile</SubType>
     </Compile>
@@ -148,6 +151,7 @@
   <ItemGroup>
     <Folder Include="General" />
     <Folder Include="Movement Control" />
+    <Folder Include="Atmega324 specific" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

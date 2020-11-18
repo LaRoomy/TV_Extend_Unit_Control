@@ -10,8 +10,19 @@
 
 #include "driverDef.h"
 
-uint8_t TV_Unit_Position = POSITION_UNDEFINED;
-uint8_t current_drive_mode = DRIVEMODE_NONE;
+#define PREFERRED_DRIVETYPE	DRIVETYPE_SINGLE_DRIVE
+
+uint8_t tv_unit_current_position = POSITION_UNDEFINED;
+uint8_t tv_unit_current_drive_mode = DRIVEMODE_NONE;
+uint8_t tv_unit_drive_type = DRIVETYPE_SINGLE_DRIVE;
+
+uint8_t tvu_sec_counter = 0;
+
+
+void setup_tvUnit_driveType(uint8_t driveType)
+{
+	tv_unit_drive_type = driveType;
+}
 
 void enable_tvUnit_driver(BOOL enable)
 {
@@ -130,7 +141,8 @@ void move_linear_drive(uint8_t direction)
 	// IN3 == 0 && IN4 == 1 -> move OUT
 	// IN3 == IN4 -> stop
 	
-	// THE PINS ARE INVERTED!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!
+	// Note:	The pins are inverted. To set a driver pin to '0'
+	//			-> the µC pin must be set to '1'
 
 	if(direction == STOP)
 	{
@@ -175,7 +187,8 @@ void move_tilt_drive(uint8_t direction)
 	// IN1 == 0 && IN2 == 1 -> move OUT
 	// IN1 == IN2 -> stop
 	
-	// THE PINS ARE INVERTED!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!
+	// Note:	The pins are inverted. To set a driver pin to '0'
+	//			-> the µC pin must be set to '1'
 
 	if(direction == STOP)// stop in any case
 	{
@@ -191,7 +204,7 @@ void move_tilt_drive(uint8_t direction)
 	{
 		if(direction == MOVE_OUT)
 		{
-			if(pos != FRONT_POSITION)
+			if(pos != FRONT_POSITION)// only move out if the front position is not already reached
 			{
 				sbi(TILTDRIVE_MOVEMENT_INPUT_PORT, IN1_TVUNIT_TILTDRIVE);
 				cbi(TILTDRIVE_MOVEMENT_INPUT_PORT, IN2_TVUNIT_TILTDRIVE);
@@ -199,7 +212,7 @@ void move_tilt_drive(uint8_t direction)
 		}
 		else if(direction == MOVE_IN)
 		{
-			if(pos != BACK_POSITION)
+			if(pos != BACK_POSITION)// only move in if the back position is not already reached
 			{
 				cbi(TILTDRIVE_MOVEMENT_INPUT_PORT, IN1_TVUNIT_TILTDRIVE);
 				sbi(TILTDRIVE_MOVEMENT_INPUT_PORT, IN2_TVUNIT_TILTDRIVE);
@@ -221,42 +234,44 @@ void updateTVUnitPosition()
 
 	if((ldPos == POSITION_UNDEFINED) || (tdPos == POSITION_UNDEFINED))
 	{
-		TV_Unit_Position = POSITION_UNDEFINED;
+		tv_unit_current_position = POSITION_UNDEFINED;
 	}
 	else
 	{
 		if((ldPos == BACK_POSITION) && (tdPos == BACK_POSITION))
 		{
-			TV_Unit_Position = BACK_POSITION;
+			tv_unit_current_position = BACK_POSITION;
 		}
 		else if((ldPos == FRONT_POSITION) && (tdPos == FRONT_POSITION))
 		{
-			TV_Unit_Position = FRONT_POSITION;
+			tv_unit_current_position = FRONT_POSITION;
 		}
 		else if((ldPos == MID_POSITION) && (tdPos == BACK_POSITION))
 		{
-			TV_Unit_Position = MID_POSITION;
+			tv_unit_current_position = MID_POSITION;
 		}
 		else
 		{
-			// position error -> make a security drive ???
-			TV_Unit_Position = ERROR_POSITION;
+			// position error -> make a security drive?
+			tv_unit_current_position = ERROR_POSITION;
 		}
 	}
 }
 
 BOOL TV_Unit_Drive_Move_Out()
 {
+	// NOTE: check drivemode - no double execution!
+
 	updateTVUnitPosition();
 
-	if(TV_Unit_Position != BACK_POSITION)
+	if(tv_unit_current_position != BACK_POSITION)
 	{
 		// invalid command - position not valid
 		return FALSE;
 	}
 	else
 	{
-		current_drive_mode = DRIVEMODE_LINEAR_OUT;
+		tv_unit_current_drive_mode = DRIVEMODE_LINEAR_OUT;
 
 		move_linear_drive(MOVE_OUT);
 
@@ -266,18 +281,18 @@ BOOL TV_Unit_Drive_Move_Out()
 
 BOOL TV_Unit_Drive_Move_In()
 {
-	// TODO: check drivemode - no double execution
+	// NOTE: check drivemode - no double execution!
 	
 	updateTVUnitPosition();
 
-	if(TV_Unit_Position != FRONT_POSITION)
+	if(tv_unit_current_position != FRONT_POSITION)
 	{
 		// invalid command - position not valid
 		return FALSE;
 	}
 	else
 	{
-		current_drive_mode = DRIVEMODE_TILT_IN;
+		tv_unit_current_drive_mode = DRIVEMODE_TILT_IN;
 
 		move_tilt_drive(MOVE_IN);
 
@@ -285,79 +300,247 @@ BOOL TV_Unit_Drive_Move_In()
 	}
 }
 
+void TV_Unit_StartSecurityDrive()
+{
+	updateTVUnitPosition();
+
+	tv_unit_drive_type = DRIVETYPE_SECURITY_DRIVE;
+
+	tv_unit_current_drive_mode = DRIVEMODE_TILT_IN;
+
+	move_tilt_drive(MOVE_IN);
+}
+
 void TV_Unit_Drive_basedOnPosition()
 {
-	// TODO: check drivemode - no double execution
+	if(tv_unit_current_drive_mode == DRIVEMODE_NONE)// check if drive is in progress
+	{
+		updateTVUnitPosition();
 	
-	updateTVUnitPosition();
-	
-	if(TV_Unit_Position == FRONT_POSITION)
-	{
-		TV_Unit_Drive_Move_In();
+		if(tv_unit_current_position == FRONT_POSITION)
+		{
+			TV_Unit_Drive_Move_In();
+		}
+		else if(tv_unit_current_position == BACK_POSITION)
+		{
+			TV_Unit_Drive_Move_Out();
+		}
+		else
+		{
+			// invalid position
+				//-> start security drive
+			TV_Unit_StartSecurityDrive();
+		}
 	}
-	else if(TV_Unit_Position == BACK_POSITION)
+	else // check if the last drive was interrupted
 	{
-		TV_Unit_Drive_Move_Out();
-	}
-	else
-	{
-		// invalid position -> security drive????
+		if(tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP)
+		{
+			// drive was interrupted
+				// -> start security drive
+			TV_Unit_StartSecurityDrive();
+		}
 	}
 }
 
-void control_drive()
+
+void control_drive_single()
 {
-	if(current_drive_mode != DRIVEMODE_NONE)
+	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
 	{
 		uint8_t linearPos = linear_drive_check_position();
 		uint8_t tiltPos = tilt_drive_check_position();
 
-		if(current_drive_mode == DRIVEMODE_LINEAR_OUT)
+		if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_OUT)
 		{
 			if(linearPos == FRONT_POSITION)
 			{
 				move_linear_drive(STOP);
 
-				current_drive_mode = DRIVEMODE_TILT_OUT;
+				tv_unit_current_drive_mode = DRIVEMODE_TILT_OUT;
 
 				move_tilt_drive(MOVE_OUT);
 			}
 		}
-		else if(current_drive_mode == DRIVEMODE_TILT_OUT)
+		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_OUT)
 		{
 			if(tiltPos == FRONT_POSITION)
 			{
 				move_tilt_drive(STOP);
 
-				current_drive_mode = DRIVEMODE_NONE;
+				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
 			}
 		}
-		else if(current_drive_mode == DRIVEMODE_TILT_IN)
+		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
 		{
 			if(tiltPos == BACK_POSITION)
 			{
 				move_tilt_drive(STOP);
 
-				current_drive_mode = DRIVEMODE_LINEAR_IN;
+				tv_unit_current_drive_mode = DRIVEMODE_LINEAR_IN;
 
 				move_linear_drive(MOVE_IN);
 			}
 		}
-		else if(current_drive_mode == DRIVEMODE_LINEAR_IN)
+		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_IN)
 		{
 			if(linearPos == BACK_POSITION)
 			{
 				move_linear_drive(STOP);
 
-				current_drive_mode = DRIVEMODE_NONE;
+				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
 			}
 		}
 	}
 }
+
+void control_drive_fusion()
+{
+	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
+	{
+		uint8_t linearPos = linear_drive_check_position();
+		uint8_t tiltPos = tilt_drive_check_position();
+
+		if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_OUT)
+		{
+			if(linearPos == MID_POSITION)
+			{
+				tv_unit_current_drive_mode = DRIVEMODE_LINEAROUT_TILTOUT;
+
+				move_tilt_drive(MOVE_OUT);
+			}
+		}
+		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAROUT_TILTOUT)
+		{
+			if(linearPos == FRONT_POSITION)
+			{
+				move_linear_drive(STOP);
+			}
+			if(tiltPos == FRONT_POSITION)
+			{
+				move_tilt_drive(STOP);
+			}
+			if((tiltPos == FRONT_POSITION) && (linearPos == FRONT_POSITION))
+			{
+				tv_unit_current_drive_mode = DRIVEMODE_NONE;
+
+				updateTVUnitPosition();
+			}
+		}
+
+
+		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
+		{
+			if(tvu_sec_counter >= 5)
+			{
+				tv_unit_current_drive_mode = DRIVEMODE_TILTIN_LINEARIN;
+				tvu_sec_counter = 0;
+				move_linear_drive(MOVE_IN);
+			}
+
+			// only for security (should not be executed before the 5 second timer is reached)
+			if(tiltPos == BACK_POSITION)
+			{
+				move_tilt_drive(STOP);
+			}
+		}
+		else if(tv_unit_current_drive_mode == DRIVEMODE_TILTIN_LINEARIN)
+		{
+			if(tiltPos == BACK_POSITION)
+			{
+				move_tilt_drive(STOP);
+				tv_unit_current_drive_mode = DRIVEMODE_LINEAR_IN;
+			}
+
+			if(linearPos == BACK_POSITION)// only for security (this should not happen before the tilt drive is in home position)
+			{
+				move_linear_drive(STOP);
+			}
+		}
+		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_IN)
+		{
+			if(linearPos == BACK_POSITION)
+			{
+				move_linear_drive(STOP);
+
+				tv_unit_current_drive_mode = DRIVEMODE_NONE;
+
+				updateTVUnitPosition();
+			}
+		}
+	}
+}
+
+void control_drive_security()
+{
+	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
+	{
+		uint8_t linearPos = linear_drive_check_position();
+		uint8_t tiltPos = tilt_drive_check_position();
+
+		if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
+		{
+			if(tiltPos == BACK_POSITION)
+			{
+				move_tilt_drive(STOP);
+
+				tv_unit_current_drive_mode = DRIVEMODE_LINEAR_IN;
+
+				move_linear_drive(MOVE_IN);
+			}
+		}
+		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_IN)
+		{
+			if(linearPos == BACK_POSITION)
+			{
+				move_linear_drive(STOP);
+
+				tv_unit_current_drive_mode = DRIVEMODE_NONE;
+				tv_unit_drive_type = PREFERRED_DRIVETYPE;
+
+				updateTVUnitPosition();
+			}
+		}
+	}
+}
+
+void TV_Unit_Control_DriveProcess()
+{
+	switch(tv_unit_drive_type)
+	{
+		case DRIVETYPE_SINGLE_DRIVE:
+			control_drive_single();
+			break;
+		case DRIVETYPE_FUSION_DRIVE:
+			control_drive_fusion();
+			break;
+		case DRIVETYPE_SECURITY_DRIVE:
+			control_drive_security();
+			break;
+		default:
+			break;
+	}
+}
+
+void TV_Unit_EmergencyStop()
+{
+	move_linear_drive(STOP);
+	move_tilt_drive(STOP);
+	tv_unit_current_drive_mode = DRIVEMODE_EMERGENCY_STOP;
+}
+
+void TV_Unit_Raise_OneSecondEvent()
+{
+	if((tv_unit_drive_type = DRIVETYPE_FUSION_DRIVE) && (tv_unit_current_drive_mode == DRIVEMODE_TILT_IN))
+	{
+		tvu_sec_counter++;
+	}
+}
+
 // **********************************************************************************************************************//
 // maintenance utilities >>
 

@@ -9,6 +9,20 @@
 
 #include "teuc.h"
 
+ISR(TIMER0_OVF_vect)
+{
+	if(timer_counter >= 38)
+	{
+		// 1 second interval
+		timer_counter = 0;
+		OneSecond_event = ACTIVATE;
+	}
+	else
+	{
+		timer_counter++;
+	}
+}
+
 int main(void)
 {
     _delay_ms(200);
@@ -21,15 +35,19 @@ int main(void)
 
 	updateTVUnitPosition();
 
-	if(TV_Unit_Position == POSITION_UNDEFINED)
-	{
+	//if(tv_unit_current_position == POSITION_UNDEFINED)
+	//{
 		// position not in defined end-position -> make a security drive!
-	}
+	//}
+
+	ActivateTimer0();
+
 
     while (1) 
     {
+/**************************************************************************************************************************/
 		// check main switch (touch button)
-		if(!(TOUCHBUTTON_PIN & (1<<TOUCHBUTTON_SENSE)))
+		if((!(TOUCHBUTTON_PIN & (1<<TOUCHBUTTON_SENSE)))&&(!switch_preventer))
 		{
 			longDelay(50);
 
@@ -38,26 +56,50 @@ int main(void)
 				switch_preventer = TRUE;
 				// TODO: schedule a timer and set the preventer to false after a short period !!!!!!!!!!!
 
-				//pc1_enable(2);
 				
-				//move_tilt_drive(MOVE_IN);
-				
-				//util_tiltdrive_front();
-				
-				if(current_drive_mode == DRIVEMODE_NONE)
+				if(checkDrivePreconditions())
 				{
 					TV_Unit_Drive_basedOnPosition();
 				}
-				
-				
-				longDelay(200);// delete???
 			}
 		}
-
+/**************************************************************************************************************************/
 		// control drive
-		control_drive();
+		TV_Unit_Control_DriveProcess();
+
+/**************************************************************************************************************************/
+		// check security conditions
+
+		// 1. door sensor(s)
+		if(!checkDoorSensor())
+		{
+			if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
+			{
+				TV_Unit_EmergencyStop();
+			}
+		}
+		// 2. motor current
+
+		// TODO!
+
+/**************************************************************************************************************************/
+		// check timer events
+		if(OneSecond_event)
+		{
+			// reset global control parameter
+			OneSecond_event = DISABLE;
+			switch_preventer = FALSE;
+
+			// raise component events
+			TV_Unit_Raise_OneSecondEvent();
+
+			// temp: !!!*******************************************
+			pc1_enable(2);
+			// **********************!!!
+		}
 		
 		
+/**************************************************************************************************************************/
 		
 		//uint8_t pos = linear_drive_check_position();
 		//if(pos == FRONT_POSITION)
