@@ -9,7 +9,7 @@
 #define ATMEGA324_TIMER_H_
 
 #define ACTIVATE	1
-#define DISABLE		2
+#define DISABLE		0
 
 #include <avr/interrupt.h>
 

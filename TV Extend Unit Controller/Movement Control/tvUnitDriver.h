@@ -10,11 +10,12 @@
 
 #include "driverDef.h"
 
-#define PREFERRED_DRIVETYPE	DRIVETYPE_SINGLE_DRIVE
+//#define PREFERRED_DRIVETYPE	DRIVETYPE_SINGLE_DRIVE
+#define PREFERRED_DRIVETYPE	DRIVETYPE_FUSION_DRIVE
 
 uint8_t tv_unit_current_position = POSITION_UNDEFINED;
 uint8_t tv_unit_current_drive_mode = DRIVEMODE_NONE;
-uint8_t tv_unit_drive_type = DRIVETYPE_SINGLE_DRIVE;
+uint8_t tv_unit_drive_type = DRIVETYPE_FUSION_DRIVE;//DRIVETYPE_SINGLE_DRIVE;
 
 uint8_t tvu_sec_counter = 0;
 
@@ -431,22 +432,25 @@ void control_drive_fusion()
 				updateTVUnitPosition();
 			}
 		}
-
-
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
 		{
-			if(tvu_sec_counter >= 5)
+			if(tvu_sec_counter >= 10)
 			{
-				tv_unit_current_drive_mode = DRIVEMODE_TILTIN_LINEARIN;
-				tvu_sec_counter = 0;
-				move_linear_drive(MOVE_IN);
+				// only for security (should not be executed before the 5 second timer is reached)
+				if(tiltPos == BACK_POSITION)
+				{
+					move_tilt_drive(STOP);
+					move_linear_drive(STOP);
+					tv_unit_current_drive_mode = DRIVEMODE_TIMING_ERROR;
+				}
+				else
+				{
+					tv_unit_current_drive_mode = DRIVEMODE_TILTIN_LINEARIN;
+					tvu_sec_counter = 0;
+					move_linear_drive(MOVE_IN);
+				}
 			}
 
-			// only for security (should not be executed before the 5 second timer is reached)
-			if(tiltPos == BACK_POSITION)
-			{
-				move_tilt_drive(STOP);
-			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILTIN_LINEARIN)
 		{
@@ -535,7 +539,7 @@ void TV_Unit_EmergencyStop()
 
 void TV_Unit_Raise_OneSecondEvent()
 {
-	if((tv_unit_drive_type = DRIVETYPE_FUSION_DRIVE) && (tv_unit_current_drive_mode == DRIVEMODE_TILT_IN))
+	if((tv_unit_drive_type == DRIVETYPE_FUSION_DRIVE) && (tv_unit_current_drive_mode == DRIVEMODE_TILT_IN))
 	{
 		tvu_sec_counter++;
 	}
