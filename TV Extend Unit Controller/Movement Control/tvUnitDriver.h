@@ -15,7 +15,7 @@
 
 uint8_t tv_unit_current_position = POSITION_UNDEFINED;
 uint8_t tv_unit_current_drive_mode = DRIVEMODE_NONE;
-uint8_t tv_unit_drive_type = DRIVETYPE_FUSION_DRIVE;//DRIVETYPE_SINGLE_DRIVE;
+uint8_t tv_unit_drive_type = PREFERRED_DRIVETYPE;//DRIVETYPE_FUSION_DRIVE;//DRIVETYPE_SINGLE_DRIVE;
 
 uint8_t tvu_sec_counter = 0;
 
@@ -78,7 +78,7 @@ uint8_t linear_drive_check_position()
 	// validate sensor results:
 	if((back_pos && front_pos) || (back_pos && mid_pos) || (front_pos && mid_pos))
 	{
-		return SENSOR_ERROR;
+		return POSITION_SENSOR_ERROR;
 	}
 	else
 	{
@@ -123,7 +123,7 @@ uint8_t tilt_drive_check_position()
 	// validate sensor results:
 	if(back_pos && front_pos)
 	{
-		return SENSOR_ERROR;
+		return POSITION_SENSOR_ERROR;
 	}
 	else
 	{
@@ -155,7 +155,7 @@ void move_linear_drive(uint8_t direction)
 	// get current position:
 	uint8_t pos = linear_drive_check_position();
 
-	if(pos != SENSOR_ERROR)// make sure the sensor data is valid
+	if(pos != POSITION_SENSOR_ERROR)// make sure the sensor data is valid
 	{
 		if(direction == MOVE_OUT)
 		{
@@ -201,7 +201,7 @@ void move_tilt_drive(uint8_t direction)
 	// get current position:
 	uint8_t pos = tilt_drive_check_position();
 
-	if(pos != SENSOR_ERROR)// make sure the sensor data is valid
+	if(pos != POSITION_SENSOR_ERROR)// make sure the sensor data is valid
 	{
 		if(direction == MOVE_OUT)
 		{
@@ -237,6 +237,10 @@ void updateTVUnitPosition()
 	{
 		tv_unit_current_position = POSITION_UNDEFINED;
 	}
+	else if((ldPos == POSITION_SENSOR_ERROR) || (tdPos == POSITION_SENSOR_ERROR))
+	{
+		tv_unit_current_position = POSITION_SENSOR_ERROR;
+	}
 	else
 	{
 		if((ldPos == BACK_POSITION) && (tdPos == BACK_POSITION))
@@ -254,7 +258,7 @@ void updateTVUnitPosition()
 		else
 		{
 			// position error -> make a security drive?
-			tv_unit_current_position = ERROR_POSITION;
+			tv_unit_current_position = POSITION_SENSOR_ERROR;
 		}
 	}
 }
@@ -328,9 +332,16 @@ void TV_Unit_Drive_basedOnPosition()
 		}
 		else
 		{
-			// invalid position
-				//-> start security drive
-			TV_Unit_StartSecurityDrive();
+			if(tv_unit_current_position == POSITION_SENSOR_ERROR)
+			{
+				// contradictory sensor positions, must be a hardware conflict -> DO NOTHING!!! (maybe report error via bluetooth...!)
+			}
+			else
+			{			
+				// invalid position
+					//-> start security drive
+				TV_Unit_StartSecurityDrive();
+			}
 		}
 	}
 	else // check if the last drive was interrupted
@@ -629,6 +640,35 @@ void util_tiltdrive_front()
 			}
 			longDelay(20);
 		}
+	}
+}
+
+void stepDrive(uint8_t direction)
+{
+	switch(direction)
+	{
+		case STEP_DIR_LINEAR_TOBACK:
+			move_linear_drive(MOVE_IN);
+			longDelay(200);
+			move_linear_drive(STOP);
+			break;
+		case STEP_DIR_LINEAR_TOFRONT:
+			move_linear_drive(MOVE_OUT);
+			longDelay(200);
+			move_linear_drive(STOP);
+			break;
+		case STEP_DIR_TILT_TOBACK:
+			move_tilt_drive(MOVE_IN);
+			longDelay(200);
+			move_tilt_drive(STOP);
+			break;
+		case STEP_DIR_TILT_TOFRONT:
+			move_tilt_drive(MOVE_OUT);
+			longDelay(200);
+			move_tilt_drive(STOP);
+			break;
+		default:
+			break;			
 	}
 }
 
