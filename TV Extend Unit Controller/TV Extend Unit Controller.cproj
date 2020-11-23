@@ -123,10 +123,40 @@
     <Compile Include="Atmega324 specific\atmega324_timer.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Atmega324 specific\Atmega324_uart_vx.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Device Property Control\CommandAnalyzer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Device Property Control\deviceProperty.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Device Property Control\ImageID.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Device Property Control\LaRoomyAppCon.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Device Property Control\propertyDispatcher.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Device Property Control\propertyStateDispatcher.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="General\BitUtilitiesEx.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="General\cstDelay.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="General\efficientStringProcessing.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="GlobalValueCtrl.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="HM-19\HMxx_Command.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
@@ -152,6 +182,8 @@
     <Folder Include="General" />
     <Folder Include="Movement Control" />
     <Folder Include="Atmega324 specific" />
+    <Folder Include="HM-19" />
+    <Folder Include="Device Property Control" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

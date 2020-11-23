@@ -314,9 +314,11 @@ void TV_Unit_StartSecurityDrive()
 	tv_unit_current_drive_mode = DRIVEMODE_TILT_IN;
 
 	move_tilt_drive(MOVE_IN);
+
+	updateDevicePropertyToSpecificCondition(UDP_SECURITY_DRIVE);
 }
 
-void TV_Unit_Drive_basedOnPosition()
+BOOL TV_Unit_Drive_basedOnPosition()
 {
 	if(tv_unit_current_drive_mode == DRIVEMODE_NONE)// check if drive is in progress
 	{
@@ -325,16 +327,22 @@ void TV_Unit_Drive_basedOnPosition()
 		if(tv_unit_current_position == FRONT_POSITION)
 		{
 			TV_Unit_Drive_Move_In();
+
+			updateDevicePropertyToSpecificCondition(UDP_DRIVING_IN);
 		}
 		else if(tv_unit_current_position == BACK_POSITION)
 		{
 			TV_Unit_Drive_Move_Out();
+
+			updateDevicePropertyToSpecificCondition(UDP_DRIVING_OUT);
 		}
 		else
 		{
 			if(tv_unit_current_position == POSITION_SENSOR_ERROR)
 			{
 				// contradictory sensor positions, must be a hardware conflict -> DO NOTHING!!! (maybe report error via bluetooth...!)
+
+				updateDevicePropertyToSpecificCondition(UDP_DRIVING_ERROR);
 			}
 			else
 			{			
@@ -343,6 +351,7 @@ void TV_Unit_Drive_basedOnPosition()
 				TV_Unit_StartSecurityDrive();
 			}
 		}
+		return TRUE;
 	}
 	else // check if the last drive was interrupted
 	{
@@ -351,6 +360,12 @@ void TV_Unit_Drive_basedOnPosition()
 			// drive was interrupted
 				// -> start security drive
 			TV_Unit_StartSecurityDrive();
+
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
 		}
 	}
 }
@@ -546,9 +561,11 @@ void TV_Unit_EmergencyStop()
 	move_linear_drive(STOP);
 	move_tilt_drive(STOP);
 	tv_unit_current_drive_mode = DRIVEMODE_EMERGENCY_STOP;
+
+	updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);
 }
 
-void TV_Unit_Raise_OneSecondEvent()
+void TV_Unit_HandleOneSecondEvent()
 {
 	if((tv_unit_drive_type == DRIVETYPE_FUSION_DRIVE) && (tv_unit_current_drive_mode == DRIVEMODE_TILT_IN))
 	{

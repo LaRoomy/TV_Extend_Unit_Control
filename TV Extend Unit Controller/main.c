@@ -7,6 +7,8 @@
 
 #define F_CPU	9830400UL
 
+#define USART0_BAUD		9600// TODO: set a higher value
+
 #include "teuc.h"
 
 ISR(TIMER0_OVF_vect)
@@ -23,25 +25,39 @@ ISR(TIMER0_OVF_vect)
 	}
 }
 
+ISR(USART0_RX_vect)
+{
+	Usart0_OnRXInterrupt();
+}
+
 int main(void)
 {
     _delay_ms(200);
 	InitializePorts();
 
+	InitGlobalValues();
+
 	longDelay(20);
 	enable_tvUnit_driver(TRUE);
 
-	// TODO: check the initial position and if the position is undefined: make a security drive
-
 	updateTVUnitPosition();
+	updateDevicePropertyFromTVUnitPosition();
 
-	//if(tv_unit_current_position == POSITION_UNDEFINED)
-	//{
-		// position not in defined end-position -> make a security drive!
-	//}
+	HMxx_Init();
+	longDelay(100);
+
+	HMxx_setType(TYPE_NOT_NEED_PIN_CODE);
+	longDelay(100);
+
+	HMxx_setName(LAROOMY_XNG001_BLUETOOTHNAME);
+	longDelay(100);
+
+	HMxx_setTransmissionMode();
+	longDelay(200);
+
+	Usart0_Clear_RX_Buffer();
 
 	ActivateTimer0();
-
 
     while (1) 
     {
@@ -91,7 +107,7 @@ int main(void)
 			switch_preventer = FALSE;
 
 			// raise component events
-			TV_Unit_Raise_OneSecondEvent();
+			TV_Unit_HandleOneSecondEvent();
 
 			// temp: !!!*******************************************
 			pc1_enable(2);
@@ -100,16 +116,26 @@ int main(void)
 		
 		
 /**************************************************************************************************************************/
-		
-		//uint8_t pos = linear_drive_check_position();
-		//if(pos == FRONT_POSITION)
-		//{
-			//pc1_enable(TRUE);
-		//}
-		//else
-		//{
-			//pc1_enable(FALSE);
-		//}
+		// check bluetooth transmission
+		if(usart0_transmission_data_available)// data is available (could be a control-command)
+		{
+			if((USART0_RX_Buffer[0] == 'O')&&(USART0_RX_Buffer[1] == 'K'))// if the buffer starts with "OK", it could be a control response or a bluetooth module notification -> check this
+			{
+				if(HMxx_onNotify(USART0_RX_Buffer))
+				{
+					if(!HMxx_getConnectionStatus())
+					{
+						//connectRequestSet = false;
+					}
+					Usart0_Clear_RX_Buffer();
+				}
+			}
+		}
+		if(usart0_transmission_complete)
+		{
+			AnalyzeTransmission(USART0_RX_Buffer);
+			Usart0_Clear_RX_Buffer();
+		}
 
     }
 }
