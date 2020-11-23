@@ -1,7 +1,7 @@
 // *
 // UART Config for Atmega324
 // *
-// LAST UPDATED: 16.12.2019
+// LAST UPDATED: 23.11.2020
 // *
 // This is a specific modification for the tv moving unit
 // *

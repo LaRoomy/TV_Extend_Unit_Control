@@ -30,10 +30,10 @@
 #define		STATUS_CONNECTION_ERROR		3
 #define		STATUS_CONNECTION_NO_ADRESS	4
 
-//#define	COMPILE_FOR_HMxx
+//#define	COMPILE_FOR_HM10 // or HM-11
 #define		COMPILE_FOR_HM18 //or HM-19
 
-#ifdef	COMPILE_FOR_HMxx
+#ifdef	COMPILE_FOR_HM10
 
 #define		BAUD_9600			0
 #define		BAUD_19200			1
@@ -82,7 +82,7 @@ uint8_t _HMxx_role;
 
 void HMxx_Init()
 {
-	Usart0_Init(Usart_Calculate_UBRR_VALUE(USART0_BAUD));
+	Usart0_Init(USART0_BAUD);
 		
 	HMxx_enableNotifications(true);
 	longDelay(100);

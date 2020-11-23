@@ -39,12 +39,12 @@ int main(void)
 
 	longDelay(20);
 	enable_tvUnit_driver(TRUE);
+	
+	HMxx_Init();
+	longDelay(100);
 
 	updateTVUnitPosition();
 	updateDevicePropertyFromTVUnitPosition();
-
-	HMxx_Init();
-	longDelay(100);
 
 	HMxx_setType(TYPE_NOT_NEED_PIN_CODE);
 	longDelay(100);
