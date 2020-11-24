@@ -230,6 +230,7 @@ void Usart0_WriteString(volatile char* string)
 		if(i == USART0_MAX_STRING_LENGTH)
 			break;
 	}
+	_delay_ms(20);
 }
 
 //void Usart1_WriteString(volatile char* string)

@@ -42,6 +42,9 @@ int main(void)
 	
 	HMxx_Init();
 	longDelay(100);
+	
+	//HMxx_setBaudrate(BAUD_38400);
+	//longDelay(200);
 
 	updateTVUnitPosition();
 	updateDevicePropertyFromTVUnitPosition();
