@@ -85,7 +85,7 @@ void Usart0_Init(uint32_t baudrate)
 	UCSR0B |= (1 << RXEN0) | (1 << TXEN0) | (1<<RXCIE0);// enable receiver interrupt
 
 	//set frame format
-	UCSR0C |= (1 << UCSZ00) | (1 << UCSZ01);	// removed: (1 << URSEL)
+	UCSR0C |= (1 << UCSZ00) | (1 << UCSZ01);
 
 	// enable global interrupt flag
 	sei();
@@ -139,11 +139,11 @@ void Usart0_Check_AsyncTransmission()
 		usart0_transmission_complete = 1;
 
 		// delimit the string with '\0' if possible
-		if ((usart0_store_index < (USART0_MAX_STRING_LENGTH - 1))
-			&& (USART0_RX_Buffer[usart0_store_index] == TRANSMISSION_COMPLETE_CHARACTER))
-		{
-			USART0_RX_Buffer[usart0_store_index] = '\0';
-		}
+		//if ((usart0_store_index < (USART0_MAX_STRING_LENGTH - 1))
+			//&& (USART0_RX_Buffer[usart0_store_index] == TRANSMISSION_COMPLETE_CHARACTER))
+		//{
+			//USART0_RX_Buffer[usart0_store_index] = '\0';
+		//}
 	}
 }
 

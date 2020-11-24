@@ -492,22 +492,66 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 	// Direction-Char:
 	// 1 = up; 2 = right; 3 = down; 4 = left; 5 = ok (middle-button)
 
-
-	// if(simpleNavigatorID == MY_NAVIGATOR_ID) { ... }
+	// only execute if auto-drive is not in progress!
+	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
+		return;
 
 	if(simpleNavigatorID == TVUNIT_FREEDRIVE_NAVIGATOR)
 	{
-		
+		switch(direction)
+		{
+			case '1':
+				if(touchType == '1')
+				{
+					move_tilt_drive(MOVE_IN);
+				}
+				else
+				{
+					move_tilt_drive(STOP);
+				}
+				break;
+			case '2':
+				if(touchType == '1')
+				{
+					move_linear_drive(MOVE_OUT);
+				}
+				else
+				{
+					move_linear_drive(STOP);
+				}
+				break;
+			case '3':
+				if(touchType == '1')
+				{
+					move_tilt_drive(MOVE_OUT);
+				}
+				else
+				{
+					move_tilt_drive(STOP);
+				}
+				break;
+			case '4':
+				if(touchType == '1')
+				{
+					move_linear_drive(MOVE_IN);
+				}
+				else
+				{
+					move_linear_drive(STOP);
+				}
+				break;
+			default:
+				break; 
+		}
 	}
 	else if(simpleNavigatorID == CDUNIT_LEFT_FREEDRIVE_NAVIGATOR)
 	{
-		
+		// TODO!
 	}
 	else if(simpleNavigatorID == CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR)
 	{
-		
+		// TODO!
 	}
-
 }
 
 #endif /* PROPERTYDISPATCHER_H_ */
