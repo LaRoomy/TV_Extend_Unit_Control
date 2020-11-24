@@ -5,10 +5,6 @@
  * Author : Hans Philipp Zimmermann
  */ 
 
- // Fehler Behebung:
- // - Kabel tx(µC) <-> rx(HM-19) austauschen
- // - Wird eventuell das $-Zeichen überschrieben?? -> String anpassen
-
 #define F_CPU	9830400UL
 
 #define USART0_BAUD		9600// TODO: set a higher value

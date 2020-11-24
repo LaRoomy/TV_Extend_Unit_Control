@@ -32,7 +32,7 @@ void ExecuteUserFactoryReset();
 void AnalyzeTransmission(volatile char* data)
 {
 	// test purpose:
-	HMxx_SendData(data);// delete this!!!!!!!!!!!
+	//HMxx_SendData(data);// delete this!!!!!!!!!!!
 
 	// the first byte of the transmission is the command as char (possible: 0-9, a-z, A-Z, *maybe extensible with special chars)
 	switch(data[0])

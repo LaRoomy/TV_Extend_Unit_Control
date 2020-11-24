@@ -56,12 +56,12 @@
 //
 // provide the element-IDs as defines to make the code more readable
 // NOTE: ID == 0 is forbidden ! This ID is reserved for error-state and comparison!
-#define		STATUS_TEXT_DISPLAY					1
-#define		INOUT_DRIVE_STARTBUTTON				2
-#define		DRIVE_IN_TIMESCHEDULER				3
-#define		TVUNIT_FREEDRIVE_NAVIGATOR			4
-#define		CDUNIT_LEFT_FREEDRIVE_NAVIGATOR		5
-#define		CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR	6
+#define		STATUS_TEXT_DISPLAY					22
+#define		INOUT_DRIVE_STARTBUTTON				23
+#define		DRIVE_IN_TIMESCHEDULER				24
+#define		TVUNIT_FREEDRIVE_NAVIGATOR			25
+#define		CDUNIT_LEFT_FREEDRIVE_NAVIGATOR		26
+#define		CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR	27
 //
 //**********************************************************************************************
 // provide the Group-IDs as defines to make the code more readable
@@ -306,8 +306,8 @@ typedef struct _PROPTERTYGROUPS {
 //
 // if Group(s) are desired, declare it here:
 PROPTERTYGROUPS propertyGroups[PROPERTY_GROUP_AMOUNT] = {
-	{AUTO_INOUT_GROUP_ID, IMAGE_ID_PROPERTYGROUP_LRSTYLE, "Automatik", "Automatic", {1,2,3,0,0}},
-	{FREEDRIVE_INOUT_GROUP_ID, IMAGE_ID_TOOL_LRSTYLE, "Freie Bewegung", "Free Drive", {4,5,6,0,0}}
+	{AUTO_INOUT_GROUP_ID, IMAGE_ID_PROPERTYGROUP_LRSTYLE, "Automatik", "Automatic", {22,23,24,0,0}},
+	{FREEDRIVE_INOUT_GROUP_ID, IMAGE_ID_TOOL_LRSTYLE, "Freie Bewegung", "Free Drive", {25,26,27,0,0}}
 };
 //**********************************************************************************************
 //**********************************************************************************************
