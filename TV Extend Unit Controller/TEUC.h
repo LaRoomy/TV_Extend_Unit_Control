@@ -137,8 +137,8 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}
 	}
 	else if(direction == UDP_DRIVING_OUT)
@@ -153,8 +153,8 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}		
 	}
 	else if(direction == UDP_SECURITY_DRIVE)
@@ -169,8 +169,8 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}		
 	}
 	else if(direction == UDP_DRIVE_INTERRUPT)
@@ -185,8 +185,8 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}
 	}
 	else if(direction == UDP_DRIVING_ERROR)
@@ -201,8 +201,8 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}		
 	}
 }

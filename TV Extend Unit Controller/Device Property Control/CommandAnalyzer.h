@@ -652,8 +652,8 @@ void onDetailedPropGroupInfoRequest(volatile char* data)
 				// send the member ID's
 				char memIds[20];
 
-				//for(uint8_t m = 3; m < 18; m++)
-					//memIds[m] = '0';
+				for(uint8_t m = 3; m < 18; m++)
+				memIds[m] = '0';
 				
 				memIds[0] = 'm';
 				memIds[1] = 'I';
