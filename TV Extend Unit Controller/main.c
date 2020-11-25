@@ -7,7 +7,7 @@
 
 #define F_CPU	9830400UL
 
-#define USART0_BAUD		9600// TODO: set a higher value
+#define USART0_BAUD		9600UL// TODO: set a higher value
 
 #include "teuc.h"
 

@@ -210,8 +210,8 @@ void sendProperty(uint8_t index)
 
 void sendPropertyDescription(uint8_t propertyID, char langCode)
 {
-	char sBuffer[] = "PD:Sxxx000$\0";
-	char eBuffer[] = "PD:E$\0";
+	char sBuffer[] = "PD:Sxxx000\0";
+	char eBuffer[] = "PD:E\0";
 
 	char pid[3];
 	x8BitValueTo3CharBuffer(pid, propertyID);
@@ -288,7 +288,7 @@ void onPropertyStateRequest(volatile char* data)
 		// Set property enabled state
 		dataOut[9]  = getPropertyEnabledStateFromID(propertyID) ? '1' : '0';
 
-		dataOut[10] = '$';	// delimiter
+		dataOut[10] = '\0';	// delimiter
 
 		HMxx_SendData(dataOut);
 	}
@@ -440,7 +440,7 @@ void onPropertyStateRequest(volatile char* data)
 			// set activity status
 			dataOut[11] = '1';			// temporary placeholder! (enabled state)
 
-			dataOut[12] = '$';			// delimiter
+			dataOut[12] = '\0';			// delimiter
 
 			HMxx_SendData(dataOut);
 		}
@@ -515,7 +515,7 @@ void onPropertyStateRequest(volatile char* data)
 			dataOut[9] = (propState & 0x08) ? '1' : '0';
 			dataOut[10] = (propState & 0x10) ? '1' : '0';
 
-			dataOut[11] = '$';
+			dataOut[11] = '\0';
 			
 			HMxx_SendData(dataOut);
 		}
@@ -547,7 +547,7 @@ void onPropertyRequest(volatile char* data)
 	else
 	{
 		// return property END / out of range
-		HMxx_SendData("RSP:A:PEND$");
+		HMxx_SendData("RSP:A:PEND\0");
 	}
 }
 
@@ -596,8 +596,8 @@ void sendPropertyGroup(uint8_t index)
 	dataOut[13] = carry[1];
 	dataOut[14] = carry[2];
 
-	dataOut[15] = '$';
-	dataOut[16] = '\0';
+	dataOut[15] = '\0';
+	//dataOut[16] = '\0';
 
 	HMxx_SendData(dataOut);
 }
@@ -618,7 +618,7 @@ void onPropertyGroupRequest(volatile char* data)
 	else
 	{
 		// return group end / out of range
-		HMxx_SendData("RSP:E:PGEND$");
+		HMxx_SendData("RSP:E:PGEND");
 	}
 }
 
@@ -634,8 +634,8 @@ void onDetailedPropGroupInfoRequest(volatile char* data)
 	{
 		uint8_t groupID = charsToU8Bit(data[2], data[3], data[4]);
 	
-		char sBuffer[] = "GI:Sxxx$\0";
-		char eBuffer[] = "GI:E$\0";
+		char sBuffer[] = "GI:Sxxx\0";
+		char eBuffer[] = "GI:E\0";
 	
 		sBuffer[4] = data[2];
 		sBuffer[5] = data[3];
@@ -651,14 +651,15 @@ void onDetailedPropGroupInfoRequest(volatile char* data)
 				
 				// send the member ID's
 				char memIds[20];
-				for(uint8_t m = 3; m < 18; m++)
-					memIds[m] = '0';
+
+				//for(uint8_t m = 3; m < 18; m++)
+					//memIds[m] = '0';
 				
 				memIds[0] = 'm';
 				memIds[1] = 'I';
 				memIds[2] = '%';
-				memIds[18] = '$';
-				memIds[19] = '\0';
+				memIds[18] = '\0';
+				//memIds[19] = '\0';
 								
 				for(uint8_t k = 0; k < MAX_GROUPMEMBER_COUNT; k++)
 				{
@@ -724,8 +725,8 @@ void notifyPropertyChanged(uint8_t propertyID, uint8_t flags)
 		notification[15]= (flags & PCHANGE_FLAG_THISPROPERTY) ? '1' : '0';
 		notification[16]= (flags & PCHANGE_FLAG_THISPROPERTYDETAIL) ? '1' : '0';
 
-		notification[17]= '$';
-		notification[18]=  0;
+		notification[17]= '\0';
+		//notification[18]=  0;
 
 		HMxx_SendData(notification);
 	}
@@ -758,8 +759,8 @@ void notifyPropertyGroupChanged(uint8_t groupID, uint8_t flags)
 		notification[15]= (flags & PCHANGE_FLAG_THISPGROUP) ? '1' : '0';
 		notification[16]= (flags & PCHANGE_FLAG_THISGROUPDETAIL) ? '1' : '0';
 
-		notification[17]= '$';
-		notification[18]=  0;
+		notification[17]= '\0';
+		//notification[18]=  0;
 
 		HMxx_SendData(notification);
 	}
@@ -771,13 +772,16 @@ void setDeviceInfoHeader(uint8_t imageID, char* message)
 	
 	
 	// at first send the start entry including the imageID for the header
-	char data[12];
-	sprintf(data, "%sxxx$", LAROOMY_DEVICEINFO_HEADER_START_ENTRY);
+	char data[11];
+
+	sprintf(data, "%sxxx", LAROOMY_DEVICEINFO_HEADER_START_ENTRY);
+
 	char threeCache[3];
 	x8BitValueTo3CharBuffer(threeCache, imageID);
 	data[7] = threeCache[0];
 	data[8] = threeCache[1];
 	data[9] = threeCache[2];
+	data[10] = '\0';
 	
 	HMxx_SendData(data);
 	// then send the message
@@ -819,8 +823,8 @@ void sendSimplePropertyState(uint8_t propertyID)
 	// Set property enabled state
 	dataOut[9]  = getPropertyEnabledStateFromID(propertyID) ? '1' : '0';
 
-	dataOut[10] = '$';	// delimiter
-	dataOut[11] = '\0'; // zero-terminator
+	dataOut[10] = '\0';	
+	//dataOut[11] = '\0'; // zero-terminator
 
 	HMxx_SendData(dataOut);
 }
@@ -838,23 +842,23 @@ void sendComplexPropertyState(uint8_t propertyID)
 	rqData[1] = tbuf[0];
 	rqData[2] = tbuf[1];
 	rqData[3] = tbuf[2];
-	rqData[4] = '$';
-	rqData[5] = '\0';
+	rqData[4] = '\0';
+	//rqData[5] = '\0';
 
 	onPropertyStateRequest(rqData);
 }
 
 void notifyPropertyStateChanged(uint8_t propertyID)
 {
-	char data[6];
+	char data[5];
 	char threeCache[3];
 	x8BitValueTo3CharBuffer(threeCache, propertyID);
 	data[0] = 'D';
 	data[1] = threeCache[0];
 	data[2] = threeCache[1];
 	data[3] = threeCache[2];
-	data[4] = '$';
-	data[5] = '\0';
+	data[4] = '\0';
+	//data[5] = '\0';
 
 	onPropertyStateRequest(data);
 }
@@ -895,7 +899,7 @@ void onSetCommand(volatile char* data)
 		// record new passkey
 		for(uint8_t i = 4; i < 14; i++)
 		{
-			if(data[i] == '$')
+			if(data[i] == '\0')
 				break;
 
 			deviceBindingPasskey[i-4] = data[i];			
@@ -948,7 +952,7 @@ void onBindingRequest(volatile char* data)
 			counter++;
 			
 
-			if((data[counter] == '>')&&(data[counter + 1] == '$'))
+			if((data[counter] == '>')&&(data[counter + 1] == '\0'))
 			{
 				password[i] = '\0';
 				break;

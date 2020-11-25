@@ -230,6 +230,8 @@ struct {
 	// NOTE:	Since the strings and the transmission process is using the ASCII Codepage, Multibyte character like ä,ö,ü or ß are not supported.
 	//			To use these character in German language, some rarely used characters will be substituted (only in German language), these character are then not supported anymore.
 	//			'ä' = '^' (0x5e);; 'ö' = '[' (0x5b);; ü = ']' (0x5d);; 'ß' = '{' (0x7b);; 'Ä' = '}' (0x7d);; 'Ö' = '|' (0x7c);; 'Ü' = '~' (0x7e)
+	//
+	//			The property names must not exceed 20 character, if the length is shorter than 20 character, the string must be limited with a terminator ('\0')
 
 	{STATUS_TEXT_DISPLAY, 5, 200, "Status: unbestimmt\0", "State: undefined\0", IMAGE_ID_QUESTIONCIRCLE_BLUE, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER},
 	{INOUT_DRIVE_STARTBUTTON, 1, 0, "Sicher einfahren\0", "Safely pull in\0", IMAGE_ID_WARNING_YELLOW, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER},
@@ -309,6 +311,12 @@ PROPTERTYGROUPS propertyGroups[PROPERTY_GROUP_AMOUNT] = {
 	{AUTO_INOUT_GROUP_ID, IMAGE_ID_PROPERTYGROUP_LRSTYLE, "Automatik", "Automatic", {22,23,24,0,0}},
 	{FREEDRIVE_INOUT_GROUP_ID, IMAGE_ID_TOOL_LRSTYLE, "Freie Bewegung", "Free Drive", {25,26,27,0,0}}
 };
+	// NOTE:	Since the strings and the transmission process is using the ASCII Codepage, Multibyte character like ä,ö,ü or ß are not supported.
+	//			To use these character in German language, some rarely used characters will be substituted (only in German language), these character are then not supported anymore.
+	//			'ä' = '^' (0x5e);; 'ö' = '[' (0x5b);; ü = ']' (0x5d);; 'ß' = '{' (0x7b);; 'Ä' = '}' (0x7d);; 'Ö' = '|' (0x7c);; 'Ü' = '~' (0x7e)
+	//
+	//			The group names must not exceed 20 character, if the length is shorter than 20 character, the string must be limited with a terminator ('\0')
+	//
 //**********************************************************************************************
 //**********************************************************************************************
 

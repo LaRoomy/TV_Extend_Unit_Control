@@ -132,8 +132,9 @@ void HMxx_setType(uint8_t index)
 {
 	if(index < 4)
 	{
-		char command[20];
+		char command[9];
 		sprintf(command, "AT+TYPE%u", index);
+		command[8] = '\0';
 		Usart0_WriteString(command);		
 	}
 }
@@ -142,8 +143,9 @@ void HMxx_setWorkingType(uint8_t wType)
 {
 	if(wType < 2)
 	{
-		char command[20];
+		char command[9];
 		sprintf(command, "AT+IMME%u", wType);
+		command[8] = '\0';
 		Usart0_WriteString(command);
 	}	
 }
@@ -153,17 +155,18 @@ void HMxx_setRole(uint8_t role)
 	_HMxx_role = role;
 
 	if(role == 0)
-		Usart0_WriteString("AT+ROLE0");
+		Usart0_WriteString("AT+ROLE0\0");
 	else if(role == 1)
-		Usart0_WriteString("AT+ROLE1");
+		Usart0_WriteString("AT+ROLE1\0");
 }
 
 void HMxx_setBaudrate(uint8_t baud_index)
 {
 	if(baud_index < 9)
 	{
-		char command[20];
+		char command[9];
 		sprintf(command, "AT+BAUD%u", baud_index);
+		command[8] = '\0';
 		Usart0_WriteString(command);
 	}	
 }
