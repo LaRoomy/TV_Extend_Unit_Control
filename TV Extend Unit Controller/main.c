@@ -11,6 +11,10 @@
 
 #include "teuc.h"
 
+
+// TODO: pin-change interrupt to make sure the sensors will not be overrun
+
+
 ISR(TIMER0_OVF_vect)
 {
 	if(timer_counter >= 38)

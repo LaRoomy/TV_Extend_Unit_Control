@@ -493,8 +493,12 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 	// 1 = up; 2 = right; 3 = down; 4 = left; 5 = ok (middle-button)
 
 	// only execute if auto-drive is not in progress!
-	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
-		return;
+	//if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
+		//return;
+		
+		
+	// TODO: make sure that the automatic drive is not in progress!!!!!!!!!!!!!!!!!!!!!!!	
+	
 
 	if(simpleNavigatorID == TVUNIT_FREEDRIVE_NAVIGATOR)
 	{

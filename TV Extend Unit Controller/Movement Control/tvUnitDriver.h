@@ -398,6 +398,7 @@ void control_drive_single()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
+				updateDevicePropertyFromTVUnitPosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -420,6 +421,7 @@ void control_drive_single()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
+				updateDevicePropertyFromTVUnitPosition();
 			}
 		}
 	}
@@ -456,6 +458,7 @@ void control_drive_fusion()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
+				updateDevicePropertyFromTVUnitPosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -500,6 +503,7 @@ void control_drive_fusion()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
+				updateDevicePropertyFromTVUnitPosition();
 			}
 		}
 	}
@@ -533,6 +537,7 @@ void control_drive_security()
 				tv_unit_drive_type = PREFERRED_DRIVETYPE;
 
 				updateTVUnitPosition();
+				updateDevicePropertyFromTVUnitPosition();
 			}
 		}
 	}

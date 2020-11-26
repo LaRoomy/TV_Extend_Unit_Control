@@ -23,6 +23,7 @@
 #include "GlobalValueCtrl.h"
 
 void updateDevicePropertyToSpecificCondition(uint8_t direction);
+void updateDevicePropertyFromTVUnitPosition();
 
 #include "TEUC PPDef.h"
 #include "Movement Control/tvUnitDriver.h"
@@ -78,8 +79,8 @@ void updateDevicePropertyFromTVUnitPosition()
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}
 		
 	}
@@ -95,8 +96,8 @@ void updateDevicePropertyFromTVUnitPosition()
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}		
 	}
 	else if(tv_unit_current_position == BACK_POSITION)
@@ -111,13 +112,10 @@ void updateDevicePropertyFromTVUnitPosition()
 
 		if(HMxx_getConnectionStatus())
 		{
-			notifyPropertyChanged(statusTextIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
-			notifyPropertyChanged(inOutButtonIndex, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(STATUS_TEXT_DISPLAY, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
+			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}		
 	}
-
-	// if hm-19 is connected -> notify property changed!
-
 }
 
 void updateDevicePropertyToSpecificCondition(uint8_t direction)
