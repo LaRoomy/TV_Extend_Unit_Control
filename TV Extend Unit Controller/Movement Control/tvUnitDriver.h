@@ -463,9 +463,9 @@ void control_drive_fusion()
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
 		{
-			if(tvu_sec_counter >= 10)
+			if(tvu_sec_counter >= 15)
 			{
-				// only for security (should not be executed before the 5 second timer is reached)
+				// only for security (should not be executed before the 15 second timer is reached)
 				if(tiltPos == BACK_POSITION)
 				{
 					move_tilt_drive(STOP);
