@@ -93,7 +93,7 @@ int main(void)
 		// 1. door sensor(s)
 		if(!checkDoorSensor())
 		{
-			if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
+			if(isTV_Unit_Drive_In_Progress())
 			{
 				TV_Unit_EmergencyStop();
 			}

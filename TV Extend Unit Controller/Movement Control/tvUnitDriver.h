@@ -694,6 +694,11 @@ void stepDrive(uint8_t direction)
 	}
 }
 
+BOOL isTV_Unit_Drive_In_Progress()
+{
+	return ((tv_unit_current_drive_mode > DRIVEMODE_NONE)&&(tv_unit_current_drive_mode < DRIVEMODE_ITERATION_END)) ? TRUE : FALSE;
+}
+
 
 
 
