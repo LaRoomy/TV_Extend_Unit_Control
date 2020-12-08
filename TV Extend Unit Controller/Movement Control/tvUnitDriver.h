@@ -365,6 +365,7 @@ BOOL TV_Unit_Drive_basedOnPosition()
 		}
 		else
 		{
+			// the function was invoked while the unit is driving
 			return FALSE;
 		}
 	}

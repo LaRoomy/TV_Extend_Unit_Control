@@ -129,7 +129,7 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].de_devicePropertyDescription, "Wird eingefahren...");
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].en_devicePropertyDescription, "Pulling in...");
 
-		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_CIRCLE_CROSSED;
+		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_STOPSIGN;
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].de_devicePropertyDescription, "Stop");
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].en_devicePropertyDescription, "Stop");
 
@@ -145,7 +145,7 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].de_devicePropertyDescription, "Wird ausgefahren...");
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].en_devicePropertyDescription, "Pulling out...");
 
-		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_CIRCLE_CROSSED;
+		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_STOPSIGN;
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].de_devicePropertyDescription, "Stop");
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].en_devicePropertyDescription, "Stop");
 
@@ -161,7 +161,7 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].de_devicePropertyDescription, "Position sichern...");
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].en_devicePropertyDescription, "Secure Position...");
 
-		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_CIRCLE_CROSSED;
+		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_STOPSIGN;
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].de_devicePropertyDescription, "Stop");
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].en_devicePropertyDescription, "Stop");
 
@@ -193,7 +193,7 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].de_devicePropertyDescription, "Fehler !");
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].en_devicePropertyDescription, "Error !");
 
-		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_CIRCLE_EMPTY;
+		LaroomyXNG_DeviceProperties[inOutButtonIndex].imageID = IMAGE_ID_RELOADARROW_LEFTBLUE;
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].de_devicePropertyDescription, "Erneut versuchen");
 		strcpy(LaroomyXNG_DeviceProperties[inOutButtonIndex].en_devicePropertyDescription, "Try again");
 

@@ -79,7 +79,10 @@ int main(void)
 				
 				if(checkDrivePreconditions())
 				{
-					TV_Unit_Drive_basedOnPosition();
+					if(!TV_Unit_Drive_basedOnPosition())
+					{
+						// the unit is driving -> Pause?
+					}
 				}
 			}
 		}
@@ -140,7 +143,6 @@ int main(void)
 			AnalyzeTransmission(USART0_RX_Buffer);
 			Usart0_Clear_RX_Buffer();
 		}
-
     }
 }
 
