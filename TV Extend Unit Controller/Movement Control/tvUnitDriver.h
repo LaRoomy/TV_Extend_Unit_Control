@@ -11,7 +11,7 @@
 #include "driverDef.h"
 
 //#define PREFERRED_DRIVETYPE	DRIVETYPE_SINGLE_DRIVE
-#define PREFERRED_DRIVETYPE	DRIVETYPE_FUSION_DRIVE
+#define PREFERRED_DRIVETYPE	DRIVETYPE_FUSIONSINGLE_DRIVE
 
 uint8_t tv_unit_current_position = POSITION_UNDEFINED;
 uint8_t tv_unit_current_drive_mode = DRIVEMODE_NONE;
@@ -365,7 +365,7 @@ BOOL TV_Unit_Drive_basedOnPosition()
 		}
 		else
 		{
-			// the function was invoked while the unit is driving
+			// the function was invoked while the unit was driving
 			return FALSE;
 		}
 	}
@@ -510,6 +510,67 @@ void control_drive_fusion()
 	}
 }
 
+void control_drive_fusionSingle()
+{
+	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
+	{
+		uint8_t linearPos = linear_drive_check_position();
+		uint8_t tiltPos = tilt_drive_check_position();
+
+		if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_OUT)
+		{
+			if(linearPos == MID_POSITION)
+			{
+				tv_unit_current_drive_mode = DRIVEMODE_LINEAROUT_TILTOUT;
+
+				move_tilt_drive(MOVE_OUT);
+			}
+		}
+		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAROUT_TILTOUT)
+		{
+			if(linearPos == FRONT_POSITION)
+			{
+				move_linear_drive(STOP);
+			}
+			if(tiltPos == FRONT_POSITION)
+			{
+				move_tilt_drive(STOP);
+			}
+			if((tiltPos == FRONT_POSITION) && (linearPos == FRONT_POSITION))
+			{
+				tv_unit_current_drive_mode = DRIVEMODE_NONE;
+
+				updateTVUnitPosition();
+				updateDevicePropertyFromTVUnitPosition();
+			}
+		}
+		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
+		{
+			if(tiltPos == BACK_POSITION)
+			{
+				move_tilt_drive(STOP);
+
+				tv_unit_current_drive_mode = DRIVEMODE_LINEAR_IN;
+
+				move_linear_drive(MOVE_IN);
+			}
+		}
+		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_IN)
+		{
+			if(linearPos == BACK_POSITION)
+			{
+				move_linear_drive(STOP);
+
+				tv_unit_current_drive_mode = DRIVEMODE_NONE;
+
+				updateTVUnitPosition();
+				updateDevicePropertyFromTVUnitPosition();
+			}
+		}
+	}
+}
+
+
 void control_drive_security()
 {
 	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
@@ -553,6 +614,9 @@ void TV_Unit_Control_DriveProcess()
 			break;
 		case DRIVETYPE_FUSION_DRIVE:
 			control_drive_fusion();
+			break;
+		case DRIVETYPE_FUSIONSINGLE_DRIVE:
+			control_drive_fusionSingle();
 			break;
 		case DRIVETYPE_SECURITY_DRIVE:
 			control_drive_security();
