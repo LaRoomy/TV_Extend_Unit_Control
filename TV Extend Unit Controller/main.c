@@ -117,7 +117,7 @@ int main(void)
 			TV_Unit_HandleOneSecondEvent();
 
 			// temp: !!!*******************************************
-			pc1_enable(2);
+			//pc1_enable(2);
 			// **********************!!!
 		}
 		
