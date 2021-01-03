@@ -46,13 +46,14 @@
 #define PROPERTY_TYPE_TIMEELAPSESELECTOR	9
 #define PROPERTY_TYPE_TIMEFRAMESELECTOR		10
 #define PROPERTY_TYPE_NAVIGATOR				11
+#define PROPERTY_TYPE_BARGRAPHDISPLAY		12
 
 //**********************************************************************************************
 // Property-Types must be separated by their state-data -> Property-types with complex data starts at this index
 #define COMPLEX_PROPERTY_STARTINDEX		6
 //**********************************************************************************************
 //
-#define PROPERTY_AMOUNT		6	// NOTE: This must conform to the property struct and is limited to 255 !!!
+#define PROPERTY_AMOUNT		7	// NOTE: This must conform to the property struct and is limited to 255 !!!
 //
 // provide the element-IDs as defines to make the code more readable
 // NOTE: ID == 0 is forbidden ! This ID is reserved for error-state and comparison!
@@ -62,6 +63,7 @@
 #define		TVUNIT_FREEDRIVE_NAVIGATOR			25
 #define		CDUNIT_LEFT_FREEDRIVE_NAVIGATOR		26
 #define		CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR	27
+#define		CURRENT_MONITOR						28
 //
 //**********************************************************************************************
 // provide the Group-IDs as defines to make the code more readable
@@ -238,7 +240,8 @@ struct {
 	{DRIVE_IN_TIMESCHEDULER, 8, 0, "Einfahrzeit w^hlen\0", "Select pull-in time\0", IMAGE_ID_CLOCK_RELOAD, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER},
 	{TVUNIT_FREEDRIVE_NAVIGATOR, 11, 0b00011111, "TV Einheit\0", "TV Unit\0", IMAGE_ID_TV_BLUEWHITE, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER},
 	{CDUNIT_LEFT_FREEDRIVE_NAVIGATOR, 11, 0b00001010, "Linke Blende\0", "Left Cover\0", IMAGE_ID_ARROW_LEFT_BLUE, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER}, 
-	{CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR, 11, 0b00001010, "Rechte Blende\0", "Right Cover\0", IMAGE_ID_ARROW_RIGHT_BLUE, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER}
+	{CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR, 11, 0b00001010, "Rechte Blende\0", "Right Cover\0", IMAGE_ID_ARROW_RIGHT_BLUE, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER},
+	{CURRENT_MONITOR, 12, 4, "Motorstrom\0", "Motor-Current\0", IMAGE_ID_FLASH_YELLOW, FLAG_PROPERTY_ENABLED | FLAG_PROPERTY_IS_GROUP_MEMBER}
 };
 //**********************************************************************************************
 /*
@@ -309,7 +312,7 @@ typedef struct _PROPTERTYGROUPS {
 // if Group(s) are desired, declare it here:
 PROPTERTYGROUPS propertyGroups[PROPERTY_GROUP_AMOUNT] = {
 	{AUTO_INOUT_GROUP_ID, IMAGE_ID_PROPERTYGROUP_LRSTYLE, "Automatik", "Automatic", {22,23,24,0,0}},
-	{FREEDRIVE_INOUT_GROUP_ID, IMAGE_ID_TOOL_LRSTYLE, "Freie Bewegung", "Free Drive", {25,26,27,0,0}}
+	{FREEDRIVE_INOUT_GROUP_ID, IMAGE_ID_TOOL_LRSTYLE, "Freie Bewegung", "Free Drive", {25,26,27,28,0}}
 };
 	// NOTE:	Since the strings and the transmission process is using the ASCII Codepage, Multibyte character like ä,ö,ü or ß are not supported.
 	//			To use these character in German language, some rarely used characters will be substituted (only in German language), these character are then not supported anymore.

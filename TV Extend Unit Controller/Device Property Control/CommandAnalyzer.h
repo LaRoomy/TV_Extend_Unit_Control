@@ -24,6 +24,7 @@ void onPropertyGroupRequest(volatile char* data);
 void onDetailedPropGroupInfoRequest(volatile char* data);
 void onSetCommand(volatile char* data);
 void onBindingRequest(volatile char* data);
+void checkAppToDeviceNotification(volatile char* data);
 
 void ExecuteUserFactoryReset();
 
@@ -59,6 +60,13 @@ void AnalyzeTransmission(volatile char* data)
 				}
 			}
 			break;
+		// **********************************************************************************************************
+		// Connection test -> send response
+		case 'y':
+			// look at Table 6 for documentation
+			checkAppToDeviceNotification(data);
+			break;
+				
 // **********************************************************************************************************
 		// Connection test -> send response
 		case 'v':
@@ -70,7 +78,7 @@ void AnalyzeTransmission(volatile char* data)
 // **********************************************************************************************************
 		// Binding-Request >> send response to indicate if binding is active and to confirm the passkey
 		case 'r':
-			// For info see documentation (Table 2)
+			// look at Table 2 for documentation
 			onBindingRequest(data);
 			break;
 
@@ -519,9 +527,21 @@ void onPropertyStateRequest(volatile char* data)
 			
 			HMxx_SendData(dataOut);
 		}
+		else if(type == PROPERTY_TYPE_BARGRAPHDISPLAY)
+		{			
+			// Property ID
+			dataOut[3] = data[1];
+			dataOut[4] = data[2];
+			dataOut[5] = data[3];
+						
+			dataOut[6] = numToChar(propState);
+			
+			dataOut[7] = '\0';
+			
+			HMxx_SendData(dataOut);			
+		}
 	
-		// TODO: add more complex types
-
+		// MARK: add more complex types here
 
 	}
 }
@@ -973,6 +993,38 @@ void onBindingRequest(volatile char* data)
 void ExecuteUserFactoryReset()
 {
 	// TODO: execute user factory reset!
+}
+
+void onMultiComplexNotificationReceived(volatile char* data)
+{
+	// save the active id in a global value to work with it in the main procedure
+	activeMultiComplexPropertyID = charsToU8Bit(data[9], data[10], data[11]);
+}
+
+void checkAppToDeviceNotification(volatile char* data)
+{
+	if((data[1] == 'D') && (data[2] == 'n'))// make sure this is a notification
+	{
+		// record the specific notification identification
+		char str[7];
+		str[6] = '\0';
+		
+		for(uint8_t i = 3; i < 9; i++)
+		{
+			str[i-3] = data[i];
+		}
+		
+		// dispatch the specific notification
+		if(compareStringsExactly(str, "MCIv-X\0"))// check for multi-complex data notification
+		{
+			onMultiComplexNotificationReceived(data);
+		}
+		else if(compareStringsExactly(str, "NavM=5\0"))// check for back navigation to device main page
+		{
+			// reset the active multi-complex ID
+			activeMultiComplexPropertyID = 0;
+		}
+	}
 }
 
 

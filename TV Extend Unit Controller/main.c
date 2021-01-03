@@ -118,6 +118,15 @@ int main(void)
 
 			// temp: !!!*******************************************
 			//pc1_enable(2);
+			
+			if(activeMultiComplexPropertyID != 0)
+			{			
+				sendBarGraphInfo(updatecounter);
+			
+				updatecounter++;
+				if(updatecounter == 8)
+					updatecounter = 0;
+			}
 			// **********************!!!
 		}
 		

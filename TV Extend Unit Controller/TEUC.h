@@ -205,6 +205,39 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 	}
 }
 
+void sendBarGraphInfo(uint8_t counter)
+{
+	switch(counter)
+	{
+		case 0:
+		HMxx_SendData("MCN&0Info 1$");
+		break;
+		case 1:
+		HMxx_SendData("MCD&0100$");
+		break;
+		case 2:
+		HMxx_SendData("MCN&1Info 2$");
+		break;
+		case 3:
+		HMxx_SendData("MCD&1050$");
+		break;
+		case 4:
+		HMxx_SendData("MCN&2Info 3$");
+		break;
+		case 5:
+		HMxx_SendData("MCD&2076$");
+		break;
+		case 6:
+		HMxx_SendData("MCN&3Info 4$");
+		break;
+		case 7:
+		HMxx_SendData("MCD&3220$");
+		break;
+		default:
+		break;
+	}
+}
+
 
 
 // test section

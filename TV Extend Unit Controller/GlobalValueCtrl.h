@@ -19,11 +19,18 @@ char deviceBindingPasskey[11];
 
 BOOL switch_preventer;
 
+uint8_t activeMultiComplexPropertyID;
+
+
+// temp:
+uint8_t updatecounter = 0;
+
 
 void InitGlobalValues()
 {
 	deviceBindingStatus = 0;
 	switch_preventer = FALSE;
+	activeMultiComplexPropertyID = 0;
 
 	for(uint8_t i = 0; i < 11; i++)
 		deviceBindingPasskey[i] = '\0';
