@@ -210,28 +210,28 @@ void sendBarGraphInfo(uint8_t counter)
 	switch(counter)
 	{
 		case 0:
-		HMxx_SendData("MCN&0Info 1$");
+		HMxx_SendData("MCN&0OUT 1\0");
 		break;
 		case 1:
-		HMxx_SendData("MCD&0100$");
+		HMxx_SendData("MCD&0100\0");
 		break;
 		case 2:
-		HMxx_SendData("MCN&1Info 2$");
+		HMxx_SendData("MCN&1OUT 2\0");
 		break;
 		case 3:
-		HMxx_SendData("MCD&1050$");
+		HMxx_SendData("MCD&1050\0");
 		break;
 		case 4:
-		HMxx_SendData("MCN&2Info 3$");
+		HMxx_SendData("MCN&2OUT 3\0");
 		break;
 		case 5:
-		HMxx_SendData("MCD&2076$");
+		HMxx_SendData("MCD&2076\0");
 		break;
 		case 6:
-		HMxx_SendData("MCN&3Info 4$");
+		HMxx_SendData("MCN&3OUT 4\0");
 		break;
 		case 7:
-		HMxx_SendData("MCD&3220$");
+		HMxx_SendData("MCD&3220\0");
 		break;
 		default:
 		break;
