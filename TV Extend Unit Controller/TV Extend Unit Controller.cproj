@@ -136,6 +136,9 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Atmega324 specific\atmega324_adc.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Atmega324 specific\atmega324_timer.h">
       <SubType>compile</SubType>
     </Compile>

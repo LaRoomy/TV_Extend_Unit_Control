@@ -26,6 +26,12 @@ ISR(TIMER0_OVF_vect)
 	else
 	{
 		timer_counter++;
+
+		if(timer_counter == 8)
+		{
+			// 200 millisec interval
+			TwoHMilliSec_event = ACTIVATE;
+		}		
 	}
 }
 
@@ -62,6 +68,7 @@ int main(void)
 	Usart0_Clear_RX_Buffer();
 
 	ActivateTimer0();
+	ADC_Init();
 
     while (1) 
     {
@@ -103,6 +110,8 @@ int main(void)
 		}
 		// 2. motor current
 
+		updateMotorCurrentValues();
+
 		// TODO!
 
 /**************************************************************************************************************************/
@@ -119,15 +128,26 @@ int main(void)
 			// temp: !!!*******************************************
 			//pc1_enable(2);
 			
-			if(activeMultiComplexPropertyID != 0)
-			{			
-				sendBarGraphInfo(updatecounter);
-			
-				updatecounter++;
-				if(updatecounter == 8)
-					updatecounter = 0;
-			}
+			//if(activeMultiComplexPropertyID != 0)
+			//{			
+				//sendBarGraphInfo(updatecounter);
+			//
+				//updatecounter++;
+				//if(updatecounter == 8)
+					//updatecounter = 0;
+			//}
 			// **********************!!!
+		}
+		if(TwoHMilliSec_event)
+		{
+			if(activeMultiComplexPropertyID != 0)
+			{
+				if(HMxx_getConnectionStatus())
+				{
+					updateCurrentMonitorData();
+				}
+			}
+			TwoHMilliSec_event = DISABLE;
 		}
 		
 		

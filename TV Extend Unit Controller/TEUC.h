@@ -33,6 +33,8 @@ void updateDevicePropertyFromTVUnitPosition();
 
 #include "Device Property Control/LaRoomyAppCon.h"
 
+#include "Atmega324 specific/atmega324_adc.h"
+
 //BOOL switch_preventer;
 //
 //void InitControlParameter()
@@ -205,38 +207,97 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 	}
 }
 
-void sendBarGraphInfo(uint8_t counter)
+void updateMotorCurrentValues()
 {
-	switch(counter)
+	linearDriveCurrentValue = ADC_ReadAverage(LINEAR_DRIVE_CURRENTSENSOR_ADC);
+	tiltDriveCurrentValue = ADC_ReadAverage(TILT_DRIVE_CURRENTSENSOR_ADC);
+	coverDriveLeftCurrentValue = ADC_ReadAverage(COVER_DRIVE_LEFT_CURRENTSENSOR_ADC);
+	coverDriveRightCurrentValue = ADC_ReadAverage(COVER_DRIVE_RIGHT_CURRENTSENSOR_ADC);
+}
+
+uint16_t adcValueFromIndex(uint8_t index)
+{
+	switch(index)
 	{
 		case 0:
-		HMxx_SendData("MCN&0OUT 1\0");
-		break;
+			return linearDriveCurrentValue;
 		case 1:
-		HMxx_SendData("MCD&0100\0");
-		break;
+			return tiltDriveCurrentValue;
 		case 2:
-		HMxx_SendData("MCN&1OUT 2\0");
-		break;
+			return coverDriveLeftCurrentValue;
 		case 3:
-		HMxx_SendData("MCD&1050\0");
-		break;
-		case 4:
-		HMxx_SendData("MCN&2OUT 3\0");
-		break;
-		case 5:
-		HMxx_SendData("MCD&2076\0");
-		break;
-		case 6:
-		HMxx_SendData("MCN&3OUT 4\0");
-		break;
-		case 7:
-		HMxx_SendData("MCD&3220\0");
-		break;
+			return coverDriveRightCurrentValue;
 		default:
-		break;
+			return 0;
 	}
 }
+
+void updateCurrentMonitorData()
+{
+	if(currentMonitorUpdateCounter == 0)
+	{
+		// send names
+		HMxx_SendData("MCN&0Linear\0");
+		HMxx_SendData("MCN&1Tilt\0");
+		HMxx_SendData("MCN&2CD Left\0");
+		HMxx_SendData("MCN&3CD Right\0");
+	}
+	else
+	{
+		// send data
+		for(uint8_t i = 0; i < 4; i++)
+		{
+			char dataOut[20];
+
+			for(uint8_t j = 0; j < 20; j++)
+				dataOut[i] = '\0';
+
+			sprintf(dataOut, "MCD&%d%d", i, adcValueFromIndex(i));
+
+			HMxx_SendData(dataOut);
+		}
+	}
+	
+	currentMonitorUpdateCounter++;
+
+	if(currentMonitorUpdateCounter == 20)
+	{
+		currentMonitorUpdateCounter = 0;
+	}
+}
+
+//void sendBarGraphInfo(uint8_t counter)
+//{
+	//switch(counter)
+	//{
+		//case 0:
+		//HMxx_SendData("MCN&0OUT 1\0");
+		//break;
+		//case 1:
+		//HMxx_SendData("MCD&0100\0");
+		//break;
+		//case 2:
+		//HMxx_SendData("MCN&1OUT 2\0");
+		//break;
+		//case 3:
+		//HMxx_SendData("MCD&1050\0");
+		//break;
+		//case 4:
+		//HMxx_SendData("MCN&2OUT 3\0");
+		//break;
+		//case 5:
+		//HMxx_SendData("MCD&2076\0");
+		//break;
+		//case 6:
+		//HMxx_SendData("MCN&3OUT 4\0");
+		//break;
+		//case 7:
+		//HMxx_SendData("MCD&3220\0");
+		//break;
+		//default:
+		//break;
+	//}
+//}
 
 
 

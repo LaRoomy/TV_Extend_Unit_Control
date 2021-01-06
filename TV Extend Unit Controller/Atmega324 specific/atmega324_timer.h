@@ -15,11 +15,13 @@
 
 volatile uint8_t timer_counter;
 volatile uint8_t OneSecond_event;
+volatile uint8_t TwoHMilliSec_event;
 
 void ActivateTimer0()
 {
 	timer_counter = 0;
 	OneSecond_event = DISABLE;
+	TwoHMilliSec_event = DISABLE;
 
 	TCCR0B = (1<<CS00)|(1<<CS02);	// activate timer with Prescaler CLK / 1024 (/256 = 37.5 ticks = 1sec.)
 	TIMSK0 = (1<<TOIE0);			// activate interrupt

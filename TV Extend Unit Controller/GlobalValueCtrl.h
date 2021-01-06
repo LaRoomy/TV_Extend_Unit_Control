@@ -21,9 +21,13 @@ BOOL switch_preventer;
 
 uint8_t activeMultiComplexPropertyID;
 
+uint16_t linearDriveCurrentValue;
+uint16_t tiltDriveCurrentValue;
+uint16_t coverDriveLeftCurrentValue;
+uint16_t coverDriveRightCurrentValue;
 
-// temp:
-uint8_t updatecounter = 0;
+
+uint8_t currentMonitorUpdateCounter;
 
 
 void InitGlobalValues()
@@ -31,6 +35,12 @@ void InitGlobalValues()
 	deviceBindingStatus = 0;
 	switch_preventer = FALSE;
 	activeMultiComplexPropertyID = 0;
+	currentMonitorUpdateCounter = 0;
+
+	linearDriveCurrentValue = 1023;
+	tiltDriveCurrentValue = 1023;
+	coverDriveRightCurrentValue = 1023;
+	coverDriveLeftCurrentValue = 1023;
 
 	for(uint8_t i = 0; i < 11; i++)
 		deviceBindingPasskey[i] = '\0';
