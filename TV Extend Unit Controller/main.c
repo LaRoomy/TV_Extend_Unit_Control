@@ -27,9 +27,10 @@ ISR(TIMER0_OVF_vect)
 	{
 		timer_counter++;
 
-		if(timer_counter == 8)
+		if(timer_counter == 14)
 		{
-			// 200 millisec interval
+			// 200 millisec interval (8)
+			// TODO!!!!!!!!!!!!!!!!!!!!!!!!!
 			TwoHMilliSec_event = ACTIVATE;
 		}		
 	}
