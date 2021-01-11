@@ -61,7 +61,6 @@ void AnalyzeTransmission(volatile char* data)
 			}
 			break;
 		// **********************************************************************************************************
-		// Connection test -> send response
 		case 'y':
 			// look at Table 6 for documentation
 			checkAppToDeviceNotification(data);
@@ -914,10 +913,10 @@ void onSetCommand(volatile char* data)
 
 		//clearGlobalControlFlag(TIMEKEEPER_LOST_POWER);
 	}
-	else if((data[1] == 'e')&&(data[2] == 'B')&&(data[3] == '§'))
+	else if((data[1] == 'e')&&(data[2] == 'B')&&(data[3] == ':'))
 	{
-		// "SeB§" == enable binding command !
-
+		// "SeB:" == enable binding command !
+		
 		// erase passkey array
 		for(uint8_t i = 0; i < 11; i++)
 		{
@@ -935,7 +934,23 @@ void onSetCommand(volatile char* data)
 		deviceBindingStatus = DEVICEBINDING_STATUS_REQUIRED;
 
 		// TODO: save passkey to eeprom
-		// TODO: save enable-parameter to eeprom
+		// TODO: save enable-parameter to eeprom 
+		
+		// temp:
+		
+		char dataOut1[20];
+		
+		for (uint8_t i = 0; i < 20; i++)
+		{
+			dataOut1[i] = '\0';
+		}
+		
+		sprintf(dataOut1, "PWSet:%s", deviceBindingPasskey);
+		
+		HMxx_SendData(dataOut1);
+		
+		
+		
 	}
 	else if((data[1] == 'r')&&(data[2] == 'B')&&(data[3] == '>'))
 	{
@@ -951,6 +966,8 @@ void onSetCommand(volatile char* data)
 
 		// TODO: delete passkey from eeprom
 		// TODO: override enable parameter in eeprom
+		
+		//HMxx_SendData("Binding released\0");
 	}
 	else if((data[1] == 'f')&&(data[2] == 'R')&&(data[3] == '='))
 	{
@@ -969,22 +986,20 @@ void onBindingRequest(volatile char* data)
 	}
 	else
 	{
-		uint8_t counter = 1;
 		char password[11];
 
 		// record password
 		for(uint8_t i = 0; i < 10; i++)
 		{
-			password[i] = data[counter];
-			counter++;
-			
+			password[i] = data[i + 1];			
 
-			if((data[counter] == '>')&&(data[counter + 1] == '\0'))
+			if((data[i + 1] == '>')&&(data[i + 2] == '\0'))
 			{
 				password[i] = '\0';
 				break;
 			}
-		}
+		}		
+		
 		// send response
 		if(compareStringsExactly(password, deviceBindingPasskey))
 		{
