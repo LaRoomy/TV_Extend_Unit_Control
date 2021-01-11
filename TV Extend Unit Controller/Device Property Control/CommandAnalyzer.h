@@ -536,7 +536,14 @@ void onPropertyStateRequest(volatile char* data)
 						
 			dataOut[6] = numToChar(propState);
 			
-			dataOut[7] = '\0';
+			dataOut[7] = '0';
+			
+			dataOut[8] = '1';
+			dataOut[9] = '2';
+			dataOut[10] = '0';
+			dataOut[11] = '0';
+			
+			dataOut[12] = '\0';
 			
 			HMxx_SendData(dataOut);			
 		}
