@@ -7,7 +7,7 @@
 
 #define F_CPU	9830400UL
 
-#define USART0_BAUD		9600UL// TODO: set a higher value
+#define USART0_BAUD		38400UL// TODO: set a higher value
 
 #include "teuc.h"
 
@@ -60,11 +60,11 @@ int main(void)
 	updateTVUnitPosition();
 	updateDevicePropertyFromTVUnitPosition();
 
-	HMxx_setType(TYPE_NOT_NEED_PIN_CODE);
-	longDelay(100);
+	//HMxx_setType(TYPE_NOT_NEED_PIN_CODE);
+	//longDelay(100);
 
-	HMxx_setName(LAROOMY_XNG001_BLUETOOTHNAME);
-	longDelay(200);
+	//HMxx_setName(LAROOMY_XNG001_BLUETOOTHNAME);
+	//longDelay(200);
 
 	Usart0_Clear_RX_Buffer();
 
