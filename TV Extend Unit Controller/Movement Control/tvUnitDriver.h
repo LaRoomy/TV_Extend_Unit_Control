@@ -10,8 +10,8 @@
 
 #include "driverDef.h"
 
-//#define PREFERRED_DRIVETYPE	DRIVETYPE_SINGLE_DRIVE
-#define PREFERRED_DRIVETYPE	DRIVETYPE_FUSIONSINGLE_DRIVE
+#define PREFERRED_DRIVETYPE	DRIVETYPE_SINGLE_DRIVE
+//#define PREFERRED_DRIVETYPE	DRIVETYPE_FUSIONSINGLE_DRIVE
 
 uint8_t tv_unit_current_position = POSITION_UNDEFINED;
 uint8_t tv_unit_current_drive_mode = DRIVEMODE_NONE;
@@ -257,8 +257,12 @@ void updateTVUnitPosition()
 		}
 		else
 		{
-			// position error -> make a security drive?
-			tv_unit_current_position = POSITION_SENSOR_ERROR;
+			// position error -> make a security drive?!
+
+			//tv_unit_current_position = POSITION_SENSOR_ERROR;
+			// this is a position error, not a sensor error, if a sensor error occurs, this will be recognized above!
+
+			tv_unit_current_position = POSITION_UNDEFINED;
 		}
 	}
 }
@@ -399,7 +403,7 @@ void control_drive_single()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromTVUnitPosition();
+				updateDevicePropertyFromAppliancePosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -422,7 +426,7 @@ void control_drive_single()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromTVUnitPosition();
+				updateDevicePropertyFromAppliancePosition();
 			}
 		}
 	}
@@ -459,7 +463,7 @@ void control_drive_fusion()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromTVUnitPosition();
+				updateDevicePropertyFromAppliancePosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -504,7 +508,7 @@ void control_drive_fusion()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromTVUnitPosition();
+				updateDevicePropertyFromAppliancePosition();
 			}
 		}
 	}
@@ -541,7 +545,7 @@ void control_drive_fusionSingle()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromTVUnitPosition();
+				updateDevicePropertyFromAppliancePosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -564,7 +568,7 @@ void control_drive_fusionSingle()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromTVUnitPosition();
+				updateDevicePropertyFromAppliancePosition();
 			}
 		}
 	}
@@ -599,7 +603,7 @@ void control_drive_security()
 				tv_unit_drive_type = PREFERRED_DRIVETYPE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromTVUnitPosition();
+				updateDevicePropertyFromAppliancePosition();
 			}
 		}
 	}

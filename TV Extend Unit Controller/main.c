@@ -46,28 +46,35 @@ int main(void)
     _delay_ms(200);
 	InitializePorts();
 
+	// set the default values for the global parameter
 	InitGlobalValues();
-
 	longDelay(20);
-	enable_tvUnit_driver(TRUE);
-	
+
+	// enable both, the cover- and tv-drive
+	EnableApplianceDriver(TRUE);
+
+	// We assume the hm-module is already configured
+	// Parameter:
+	//
+	//	BAUDRATE =	BAUD_38400
+	//	NAME =		LAROOMY_XNG001_BLUETOOTHNAME
+	//	TYPE =		TYPE_NOT_NEED_PIN_CODE
+	//	NOTI =		ENABLED!
 	HMxx_Init();
-	longDelay(100);
 	
 	//HMxx_setBaudrate(BAUD_38400);
 	//longDelay(200);
-
-	updateTVUnitPosition();
-	updateDevicePropertyFromTVUnitPosition();
-
 	//HMxx_setType(TYPE_NOT_NEED_PIN_CODE);
 	//longDelay(100);
-
 	//HMxx_setName(LAROOMY_XNG001_BLUETOOTHNAME);
 	//longDelay(200);
+	//Usart0_Clear_RX_Buffer();
 
-	Usart0_Clear_RX_Buffer();
 
+	// get the current position of the driver-units and update the properties
+	UpdateAppliancePosition();
+
+	// activate remaining modules
 	ActivateTimer0();
 	ADC_Init();
 

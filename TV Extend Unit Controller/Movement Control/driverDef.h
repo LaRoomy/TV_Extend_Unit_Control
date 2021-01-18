@@ -12,12 +12,16 @@
 #define		STOP		0
 #define		MOVE_OUT	1
 #define		MOVE_IN		2
+#define		MOVE_OPEN	3
+#define		MOVE_CLOSE	4
 
-#define		POSITION_UNDEFINED	0
-#define		FRONT_POSITION		1
-#define		MID_POSITION		2
-#define		BACK_POSITION		3
-#define		POSITION_SENSOR_ERROR		8
+#define		POSITION_UNDEFINED		0
+#define		FRONT_POSITION			1
+#define		MID_POSITION			2
+#define		BACK_POSITION			3	
+#define		OPENED_POSITION			4
+#define		CLOSED_POSTION			5
+#define		POSITION_SENSOR_ERROR	8
 //#define		SENSOR_ERROR		255
 
 #define		DRIVEMODE_NONE				0

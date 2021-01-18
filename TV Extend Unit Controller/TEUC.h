@@ -23,10 +23,11 @@
 #include "GlobalValueCtrl.h"
 
 void updateDevicePropertyToSpecificCondition(uint8_t direction);
-void updateDevicePropertyFromTVUnitPosition();
+void updateDevicePropertyFromAppliancePosition();
 
 #include "TEUC PPDef.h"
 #include "Movement Control/tvUnitDriver.h"
+#include "Movement Control/cdUnitDriver.h"
 
 
 #include "Atmega324 specific/atmega324_timer.h"
@@ -64,8 +65,26 @@ BOOL checkDrivePreconditions()
 	return checkDoorSensor();
 }
 
-void updateDevicePropertyFromTVUnitPosition()
+void UpdateAppliancePosition()
 {
+	updateCDUnitPosition();
+	updateTVUnitPosition();
+
+	updateDevicePropertyFromAppliancePosition();
+}
+
+void EnableApplianceDriver(BOOL enable)
+{
+	enable_tvUnit_driver(enable);
+	enable_cdUnit_Driver(enable);
+}
+
+void updateDevicePropertyFromAppliancePosition()
+{
+
+		// TODO: integrate the cover-drive position!!!
+
+
 	uint8_t statusTextIndex = getPropertyIndexFromID(STATUS_TEXT_DISPLAY);
 	uint8_t inOutButtonIndex = getPropertyIndexFromID(INOUT_DRIVE_STARTBUTTON);
 

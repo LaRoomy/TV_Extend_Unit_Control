@@ -181,6 +181,9 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Movement Control\cdUnitDriver.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Movement Control\coverDriveUnitDriver.h">
       <SubType>compile</SubType>
     </Compile>

@@ -80,13 +80,14 @@ char HMxx_mac_adress[13];
 uint8_t _HMxx_central_connection_status;
 uint8_t _HMxx_role;
 
+// NOTE: At this point we assume the module is already configured.
 void HMxx_Init()
 {
 	Usart0_Init(USART0_BAUD);
-		
-	HMxx_enableNotifications(true);
-	longDelay(100);
-
+	
+	//HMxx_enableNotifications(true);
+	//longDelay(100);
+	
 	_HMxx_isASleep = false;
 	_HMxx_isConnected = false;
 	_HMxx_macValid = false;
