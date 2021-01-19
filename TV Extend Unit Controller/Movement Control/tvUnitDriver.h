@@ -403,7 +403,9 @@ void control_drive_single()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromAppliancePosition();
+				//updateDevicePropertyFromAppliancePosition();
+
+				TVDriveReachedFrontPosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -425,8 +427,12 @@ void control_drive_single()
 
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
+				
+
 				updateTVUnitPosition();
-				updateDevicePropertyFromAppliancePosition();
+				//updateDevicePropertyFromAppliancePosition();
+
+				TVDriveReachedBackPosition();
 			}
 		}
 	}
@@ -463,7 +469,9 @@ void control_drive_fusion()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromAppliancePosition();
+				//updateDevicePropertyFromAppliancePosition();
+
+				TVDriveReachedFrontPosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -508,7 +516,9 @@ void control_drive_fusion()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromAppliancePosition();
+				//updateDevicePropertyFromAppliancePosition();
+
+				TVDriveReachedBackPosition();
 			}
 		}
 	}
@@ -545,7 +555,9 @@ void control_drive_fusionSingle()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromAppliancePosition();
+				//updateDevicePropertyFromAppliancePosition();
+
+				TVDriveReachedFrontPosition();
 			}
 		}
 		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
@@ -568,7 +580,9 @@ void control_drive_fusionSingle()
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromAppliancePosition();
+				//updateDevicePropertyFromAppliancePosition();
+
+				TVDriveReachedBackPosition();
 			}
 		}
 	}
@@ -603,7 +617,9 @@ void control_drive_security()
 				tv_unit_drive_type = PREFERRED_DRIVETYPE;
 
 				updateTVUnitPosition();
-				updateDevicePropertyFromAppliancePosition();
+				//updateDevicePropertyFromAppliancePosition();
+
+				TVDriveReachedBackPosition();
 			}
 		}
 	}
@@ -636,7 +652,7 @@ void TV_Unit_EmergencyStop()
 	move_tilt_drive(STOP);
 	tv_unit_current_drive_mode = DRIVEMODE_EMERGENCY_STOP;
 
-	updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);
+	//updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);
 }
 
 void TV_Unit_HandleOneSecondEvent()
@@ -734,7 +750,7 @@ void util_tiltdrive_front()
 	}
 }
 
-void stepDrive(uint8_t direction)
+void stepTVDrive(uint8_t direction)
 {
 	switch(direction)
 	{

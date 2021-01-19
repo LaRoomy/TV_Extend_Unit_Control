@@ -89,21 +89,13 @@ int main(void)
 			if(!(TOUCHBUTTON_PIN & (1<<TOUCHBUTTON_SENSE)))
 			{
 				switch_preventer = TRUE;
-				// TODO: schedule a timer and set the preventer to false after a short period !!!!!!!!!!!
 
-				
-				if(checkDrivePreconditions())
-				{
-					if(!TV_Unit_Drive_basedOnPosition())
-					{
-						// the unit is driving -> Pause?
-					}
-				}
+				StartApplianceDrive();
 			}
 		}
 /**************************************************************************************************************************/
 		// control drive
-		TV_Unit_Control_DriveProcess();
+		ControlDriveProcess();
 
 /**************************************************************************************************************************/
 		// check security conditions
@@ -111,10 +103,7 @@ int main(void)
 		// 1. door sensor(s)
 		if(!checkDoorSensor())
 		{
-			if(isTV_Unit_Drive_In_Progress())
-			{
-				TV_Unit_EmergencyStop();
-			}
+			EmergencyStop();
 		}
 		// 2. motor current
 

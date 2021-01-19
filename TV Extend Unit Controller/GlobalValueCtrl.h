@@ -26,6 +26,8 @@ uint16_t tiltDriveCurrentValue;
 uint16_t coverDriveLeftCurrentValue;
 uint16_t coverDriveRightCurrentValue;
 
+uint8_t	currentAppliancePosition;
+
 
 uint8_t currentMonitorUpdateCounter;
 
@@ -36,6 +38,8 @@ void InitGlobalValues()
 	switch_preventer = FALSE;
 	activeMultiComplexPropertyID = 0;
 	currentMonitorUpdateCounter = 0;
+
+	currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;
 
 	linearDriveCurrentValue = 1023;
 	tiltDriveCurrentValue = 1023;

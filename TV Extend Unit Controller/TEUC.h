@@ -17,6 +17,11 @@
 #define		UDP_DRIVE_INTERRUPT	4
 #define		UDP_DRIVING_ERROR	5
 
+#define		APPLIANCE_POSITON_UNDEFINED		0
+#define		APPLIANCE_POSITION_OUT			1
+#define		APPLIANCE_POSITION_IN			2
+#define		APPLIANCE_POSITION_SENSOR_ERROR	3
+
 #include "General/BitUtilitiesEx.h"
 #include "General/cstDelay.h"
 
@@ -26,22 +31,20 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction);
 void updateDevicePropertyFromAppliancePosition();
 
 #include "TEUC PPDef.h"
+
+void CoverDriveReachedOpenedPosition();
+void TVDriveReachedBackPosition();
+void CoverDriveReachedClosedPosition();
+void TVDriveReachedFrontPosition();
+
 #include "Movement Control/tvUnitDriver.h"
 #include "Movement Control/cdUnitDriver.h"
 
 
 #include "Atmega324 specific/atmega324_timer.h"
-
 #include "Device Property Control/LaRoomyAppCon.h"
-
 #include "Atmega324 specific/atmega324_adc.h"
 
-//BOOL switch_preventer;
-//
-//void InitControlParameter()
-//{
-	//switch_preventer = FALSE;
-//}
 
 // check if the doors are closed
 BOOL checkDoorSensor()
@@ -50,7 +53,16 @@ BOOL checkDoorSensor()
 	// PORTC0 == 0 -> one or more doors are open
 	if(!(DOOR_SENSOR_PIN & (1<<DOOR_SENSOR)))
 	{
-		return FALSE;
+		longDelay(20);
+
+		if(!(DOOR_SENSOR_PIN & (1<<DOOR_SENSOR)))
+		{
+			return FALSE;
+		}
+		else
+		{
+			return TRUE;
+		}
 	}
 	else
 	{
@@ -65,12 +77,39 @@ BOOL checkDrivePreconditions()
 	return checkDoorSensor();
 }
 
-void UpdateAppliancePosition()
+void UpdateAppliancePosition(BOOL updateProperty)
 {
 	updateCDUnitPosition();
 	updateTVUnitPosition();
 
-	updateDevicePropertyFromAppliancePosition();
+	// TODO: make a global position including both component conditions!!!!!!!!!!!!!!
+
+	if((cdUnit_currentPosition == OPENED_POSITION) && (tv_unit_current_position == FRONT_POSITION))
+	{
+		// tv is out!
+		currentAppliancePosition = APPLIANCE_POSITION_OUT;
+	}
+	else if((cdUnit_currentPosition == CLOSED_POSTION) && (tv_unit_current_position == BACK_POSITION))
+	{
+		// tv is in!
+		currentAppliancePosition = APPLIANCE_POSITION_IN;
+	}
+	else
+	{
+		if((tv_unit_current_position == POSITION_SENSOR_ERROR) || (cdUnit_currentPosition == POSITION_SENSOR_ERROR))
+		{
+			// SENSOR ERROR MEANS: OPPOSED SENSORS ARE ENGAGED -> NO DRIVE IS POSSIBLE !!!
+			currentAppliancePosition = APPLIANCE_POSITION_SENSOR_ERROR;
+		}
+		else
+		{
+			currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;	
+		}
+	}
+	if(updateProperty)
+	{
+		updateDevicePropertyFromAppliancePosition();
+	}
 }
 
 void EnableApplianceDriver(BOOL enable)
@@ -79,10 +118,94 @@ void EnableApplianceDriver(BOOL enable)
 	enable_cdUnit_Driver(enable);
 }
 
+void ControlDriveProcess()
+{
+	// only invoke the appropriate function for the specific process or none if no drive is active?!
+
+	TV_Unit_Control_DriveProcess();
+	CD_Unit_Control_Drive_Process();
+}
+
+void EmergencyStop()
+{
+	BOOL isCDDriving = isCD_Unit_Drive_In_Progress();
+	BOOL isTVDriving = isTV_Unit_Drive_In_Progress();
+
+	if(isCDDriving || isTVDriving)
+	{	
+		if(isCDDriving)
+		{
+			CD_Unit_Emergency_Stop();
+		}
+		if(isTVDriving)
+		{
+			TV_Unit_EmergencyStop();
+		}
+		updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);
+	}
+}
+
+void StartApplianceDrive()
+{
+	// check preconditions
+	if(checkDrivePreconditions())
+	{
+		// check if a drive is in progress
+		BOOL isCDDriving = isCD_Unit_Drive_In_Progress();
+		BOOL isTVDriving = isTV_Unit_Drive_In_Progress();
+
+		if(isCDDriving || isTVDriving)
+		{
+			// drive is in progress or in interrupted state -> check
+			if((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP))
+			{
+				// the last drive was interrupted -> make security drive ???
+			}
+		}
+		else
+		{
+			// get position and drive based on that condition
+			UpdateAppliancePosition(FALSE);
+
+			if(currentAppliancePosition == APPLIANCE_POSITION_IN)
+			{
+				// move out:
+				CD_Unit_Drive_Open();
+
+				updateDevicePropertyToSpecificCondition(UDP_DRIVING_OUT);
+			}
+			else if(currentAppliancePosition == APPLIANCE_POSITION_OUT)
+			{
+				// move in:
+				TV_Unit_Drive_Move_In();
+
+				updateDevicePropertyToSpecificCondition(UDP_DRIVING_IN);
+			}
+			else if(currentAppliancePosition == APPLIANCE_POSITION_SENSOR_ERROR)
+			{
+				// fatal error -> do not drive!
+				updateDevicePropertyToSpecificCondition(UDP_DRIVING_ERROR);
+			}
+			else
+			{
+				// must be in undefined state -> security drive!
+
+				// TODO: !!!!!!!!!
+			}
+		}
+	}
+	else
+	{
+		// preconditions not fulfilled -> report to app
+
+		// TODO: !!!!!!!!
+	}
+}
+
 void updateDevicePropertyFromAppliancePosition()
 {
 
-		// TODO: integrate the cover-drive position!!!
+		// TODO: integrate the cover-drive position!!!!!!!!!!!!!!!!!!!!!!!
 
 
 	uint8_t statusTextIndex = getPropertyIndexFromID(STATUS_TEXT_DISPLAY);
@@ -224,6 +347,28 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}		
 	}
+}
+
+void CoverDriveReachedOpenedPosition()
+{
+	// the cover-drive reached the open-position, so start tv-drive
+	TV_Unit_Drive_Move_Out();
+}
+
+void TVDriveReachedBackPosition()
+{
+	// the tv-drive reached the 'in' position, so start cover-drive to close the cover
+	CD_Unit_Drive_Close();
+}
+
+void CoverDriveReachedClosedPosition()
+{
+	UpdateAppliancePosition(TRUE);
+}
+
+void TVDriveReachedFrontPosition()
+{
+	UpdateAppliancePosition(TRUE);
 }
 
 void updateMotorCurrentValues()

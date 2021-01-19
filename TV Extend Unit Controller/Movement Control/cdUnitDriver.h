@@ -12,6 +12,7 @@
 #include "driverDef.h"
 
 uint8_t cdUnit_currentPosition = POSITION_UNDEFINED;
+uint8_t cdUnit_currentDriveMode = DRIVEMODE_NONE;
 
 void enable_cdUnit_Driver(BOOL enable)
 {
@@ -212,14 +213,147 @@ void moveLeftDrive(uint8_t direction)
 	}
 }
 
-void CD_Unit_Drive_Open()
+BOOL CD_Unit_Drive_Open()
 {
-	
+	// NOTE: check drivemode - no double execution!
+
+	updateCDUnitPosition();
+
+	if(cdUnit_currentPosition != CLOSED_POSTION)
+	{
+		// invalid command - position not valid!
+		return FALSE;
+	}
+	else
+	{
+		cdUnit_currentDriveMode = DRIVEMODE_CD_OPEN;
+
+		moveLeftDrive(MOVE_OPEN);
+		moveRightDrive(MOVE_OPEN);
+
+		return TRUE;
+	}
 }
 
-void CD_Unit_Drive_Close()
+BOOL CD_Unit_Drive_Close()
 {
-	
+	// NOTE: check drivemode - no double execution!
+
+	updateCDUnitPosition();
+
+	if(cdUnit_currentPosition != OPENED_POSITION)
+	{
+		// invalid command - position not valid
+		return FALSE;
+	}
+	else
+	{
+		cdUnit_currentDriveMode = DRIVEMODE_CD_CLOSE;
+
+		moveLeftDrive(MOVE_CLOSE);
+		moveRightDrive(MOVE_CLOSE);
+
+		return TRUE;
+	}
+}
+
+void CD_Unit_Control_Drive_Process()
+{
+	// only execute if a drive is in progress
+	if(cdUnit_currentDriveMode != DRIVEMODE_NONE)
+	{
+		// get positions
+		uint8_t leftPos = checkLeftCoverPosition();
+		uint8_t rightPos = checkRightCoverPosition();
+
+		if(cdUnit_currentDriveMode == DRIVEMODE_CD_OPEN)
+		{
+			// check if a endpoint is reached and stop the motor, respectively
+			if(leftPos == OPENED_POSITION)
+			{
+				moveLeftDrive(STOP);
+			}
+			if(rightPos == OPENED_POSITION)
+			{
+				moveRightDrive(STOP);
+			}
+			// if both have reached the endpoint, reset parameter and report
+			if((leftPos == OPENED_POSITION) && (rightPos == OPENED_POSITION))
+			{
+				cdUnit_currentDriveMode = DRIVEMODE_NONE;
+
+				// update position parameter
+				updateCDUnitPosition();
+
+				// invoke callback to start tv-drive
+				CoverDriveReachedOpenedPosition();
+			}
+		}
+		else if(cdUnit_currentDriveMode == DRIVEMODE_CD_CLOSE)
+		{
+			// check if a endpoint is reached and stop the motor, respectively
+			if(leftPos == CLOSED_POSTION)
+			{
+				moveLeftDrive(STOP);
+			}
+			if(rightPos == CLOSED_POSTION)
+			{
+				moveRightDrive(STOP);
+			}
+			// if both have reached the endpoint, reset parameter
+			if((leftPos == CLOSED_POSTION) && (rightPos == CLOSED_POSTION))
+			{
+				cdUnit_currentDriveMode = DRIVEMODE_NONE;
+
+				// update position parameter
+				updateCDUnitPosition();
+			}
+		}
+	}
+}
+
+void CD_Unit_Emergency_Stop()
+{
+	moveRightDrive(STOP);
+	moveLeftDrive(STOP);
+	cdUnit_currentDriveMode = DRIVEMODE_EMERGENCY_STOP;
+}
+
+BOOL isCD_Unit_Drive_In_Progress()
+{
+	return ((cdUnit_currentDriveMode == DRIVEMODE_CD_OPEN) || (cdUnit_currentDriveMode == DRIVEMODE_CD_CLOSE)) ? TRUE : FALSE;
+}
+
+// **********************************************************************************************************************//
+// maintenance utilities >>
+
+void stepCoverDrive(uint8_t direction)
+{
+	switch(direction)
+	{
+		case STEP_DIR_CDLEFT_CLOSE:
+			moveLeftDrive(MOVE_CLOSE),
+			longDelay(200);
+			moveLeftDrive(STOP);
+			break;
+		case STEP_DIR_CDLEFT_OPEN:
+			moveLeftDrive(MOVE_OPEN);
+			longDelay(200);
+			moveLeftDrive(STOP);
+			break;
+		case STEP_DIR_CDRIGHT_CLOSE
+			moveRightDrive(MOVE_CLOSE);
+			longDelay(200);
+			moveRightDrive(STOP);
+			break;
+		case STEP_DIR_CDRIGHT_OPEN:
+			moveRightDrive(MOVE_OPEN);
+			longDelay(200);
+			moveRightDrive(STOP);
+			break;
+		default:
+			break;
+	}
 }
 
 
