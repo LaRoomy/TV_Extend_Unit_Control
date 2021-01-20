@@ -26,8 +26,8 @@
 #define /*_Out_*/	IN4_TVUNIT_LINEARDRIVE		PORTB1	// 0 == not switched / 1 == set IN pin to GND (must be 0 at startup)
 #define /*_Out_*/	IN1_TVUNIT_TILTDRIVE		PORTB2	// 0 == not switched / 1 == set IN pin to GND (must be 0 at startup)
 #define /*_Out_*/	IN2_TVUNIT_TILTDRIVE		PORTB3	// 0 == not switched / 1 == set IN pin to GND (must be 0 at startup)
-//					NOT CONNECTED				PORTB4
-//					MOSI						PORTB5
+#define /*_In_*/	EXTRA_BOARD_BUTTON_LEFT		PORTB4	// extra button on the board (left sided)
+#define /*_In_*/	EXTRA_BOARD_BUTTON_RIGHT	PORTB5	// extra button on the board (right sided)  + MOSI !
 //					MISO						PORTB6
 //					SCK							PORTB7
 
@@ -59,6 +59,8 @@
 
 #define		LINEARDRIVE_MOVEMENT_INPUT_PORT	PORTB
 #define		TILTDRIVE_MOVEMENT_INPUT_PORT	PORTB
+
+#define		EXTRA_BOARD_BUTTON_PIN			PINB
 
 #define		COVERDRIVE_MOVEMENT_INPUT_PORT	PORTC
 

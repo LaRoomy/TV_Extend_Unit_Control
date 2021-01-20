@@ -341,7 +341,7 @@ void stepCoverDrive(uint8_t direction)
 			longDelay(200);
 			moveLeftDrive(STOP);
 			break;
-		case STEP_DIR_CDRIGHT_CLOSE
+		case STEP_DIR_CDRIGHT_CLOSE:
 			moveRightDrive(MOVE_CLOSE);
 			longDelay(200);
 			moveRightDrive(STOP);

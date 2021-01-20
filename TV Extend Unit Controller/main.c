@@ -72,7 +72,7 @@ int main(void)
 
 
 	// get the current position of the driver-units and update the properties
-	UpdateAppliancePosition();
+	UpdateAppliancePosition(TRUE);
 
 	// activate remaining modules
 	ActivateTimer0();
@@ -96,6 +96,10 @@ int main(void)
 /**************************************************************************************************************************/
 		// control drive
 		ControlDriveProcess();
+
+/**************************************************************************************************************************/
+		// check board buttons
+		CheckBoardButtons();
 
 /**************************************************************************************************************************/
 		// check security conditions

@@ -430,6 +430,33 @@ void updateCurrentMonitorData()
 	}
 }
 
+void CheckBoardButtons()
+{
+	if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_LEFT))
+	{
+		longDelay(50);
+
+		if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_LEFT))
+		{
+			// add left button action here...
+			
+			longDelay(200);
+		}
+	}
+	if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_RIGHT))
+	{
+		longDelay(50);
+
+		if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_RIGHT))
+		{
+			// add right button action here...
+			
+			longDelay(200);
+		}
+	}
+	
+}
+
 //void sendBarGraphInfo(uint8_t counter)
 //{
 	//switch(counter)

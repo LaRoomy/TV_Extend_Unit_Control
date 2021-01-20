@@ -497,64 +497,126 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 		//return;
 		
 		
-	// TODO: make sure that the automatic drive is not in progress!!!!!!!!!!!!!!!!!!!!!!!	
+	// TODO: make sure that the automatic drive is not in progress!!!!!!!!!!!!!!!!!!!!!!!
 	
+	uint8_t isTVMoving = isTV_Unit_Drive_In_Progress();
+	uint8_t isCoverMoving = isCD_Unit_Drive_In_Progress();
+	
+	uint8_t isSecurityHold = ((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP)) ? 1 : 0;
 
-	if(simpleNavigatorID == TVUNIT_FREEDRIVE_NAVIGATOR)
+
+	// TODO: TEST IF THIS WORKS!!!!!!!!!!!!!!
+
+	if((!isTVMoving && !isCoverMoving) || isSecurityHold)
 	{
-		switch(direction)
+		if(simpleNavigatorID == TVUNIT_FREEDRIVE_NAVIGATOR)
 		{
-			case '1':
-				if(touchType == '1')
-				{
-					move_tilt_drive(MOVE_IN);
-				}
-				else
-				{
-					move_tilt_drive(STOP);
-				}
-				break;
-			case '2':
-				if(touchType == '1')
-				{
-					move_linear_drive(MOVE_OUT);
-				}
-				else
-				{
+			switch(direction)
+			{
+				case '1':// up
+					if(touchType == '1')
+					{
+						move_tilt_drive(MOVE_IN);
+					}
+					else
+					{
+						move_tilt_drive(STOP);
+					}
+					break;
+				case '2':// right
+					if(touchType == '1')
+					{
+						move_linear_drive(MOVE_OUT);
+					}
+					else
+					{
+						move_linear_drive(STOP);
+					}
+					break;
+				case '3':// down
+					if(touchType == '1')
+					{
+						move_tilt_drive(MOVE_OUT);
+					}
+					else
+					{
+						move_tilt_drive(STOP);
+					}
+					break;
+				case '4':// left
+					if(touchType == '1')
+					{
+						move_linear_drive(MOVE_IN);
+					}
+					else
+					{
+						move_linear_drive(STOP);
+					}
+					break;
+				case '5':// middle button (Ok)
 					move_linear_drive(STOP);
-				}
-				break;
-			case '3':
-				if(touchType == '1')
-				{
-					move_tilt_drive(MOVE_OUT);
-				}
-				else
-				{
 					move_tilt_drive(STOP);
-				}
-				break;
-			case '4':
-				if(touchType == '1')
-				{
-					move_linear_drive(MOVE_IN);
-				}
-				else
-				{
-					move_linear_drive(STOP);
-				}
-				break;
-			default:
-				break; 
+					break;
+				default:
+					break; 
+			}
 		}
-	}
-	else if(simpleNavigatorID == CDUNIT_LEFT_FREEDRIVE_NAVIGATOR)
-	{
-		// TODO!
-	}
-	else if(simpleNavigatorID == CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR)
-	{
-		// TODO!
+		else if(simpleNavigatorID == CDUNIT_LEFT_FREEDRIVE_NAVIGATOR)
+		{
+			switch(direction)
+			{
+				case '2':// right
+					if(touchType == '1')
+					{
+						moveLeftDrive(MOVE_CLOSE);
+					}
+					else
+					{
+						moveLeftDrive(STOP);
+					}
+					break;
+				case '4':// left
+					if(touchType == '1')
+					{
+						moveLeftDrive(MOVE_OPEN);
+					}
+					else
+					{
+						moveLeftDrive(STOP);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		else if(simpleNavigatorID == CDUNIT_RIGHT_FREEDRIVE_NAVIGATOR)
+		{
+			switch(direction)
+			{
+				case '2':// right
+					if(touchType == '1')
+					{
+						moveRightDrive(MOVE_OPEN);
+					}
+					else
+					{
+						moveRightDrive(STOP);
+					}
+					break;
+				case '4':// left
+					if(touchType == '1')
+					{
+						moveRightDrive(MOVE_CLOSE);
+					}
+					else
+					{
+						moveRightDrive(STOP);
+					}
+					break;
+				default:
+					break;
+			}
+		}
 	}
 }
 
