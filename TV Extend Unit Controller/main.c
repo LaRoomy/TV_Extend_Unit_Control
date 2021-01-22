@@ -12,7 +12,9 @@
 #include "teuc.h"
 
 
-// TODO: pin-change interrupt to make sure the sensors will not be overrun
+// TODO: pin-change interrupt to make sure the sensors will not be overrun!?
+
+// TODO: eeprom!
 
 
 ISR(TIMER0_OVF_vect)

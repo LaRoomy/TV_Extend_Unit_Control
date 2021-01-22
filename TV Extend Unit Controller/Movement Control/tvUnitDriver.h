@@ -663,6 +663,11 @@ void TV_Unit_HandleOneSecondEvent()
 	}
 }
 
+BOOL isTV_Unit_Drive_In_Progress()
+{
+	return ((tv_unit_current_drive_mode > DRIVEMODE_NONE)&&(tv_unit_current_drive_mode < DRIVEMODE_ITERATION_END)) ? TRUE : FALSE;
+}
+
 // **********************************************************************************************************************//
 // maintenance utilities >>
 
@@ -778,12 +783,6 @@ void stepTVDrive(uint8_t direction)
 			break;			
 	}
 }
-
-BOOL isTV_Unit_Drive_In_Progress()
-{
-	return ((tv_unit_current_drive_mode > DRIVEMODE_NONE)&&(tv_unit_current_drive_mode < DRIVEMODE_ITERATION_END)) ? TRUE : FALSE;
-}
-
 
 
 
