@@ -327,6 +327,81 @@ BOOL isCD_Unit_Drive_In_Progress()
 // **********************************************************************************************************************//
 // maintenance utilities >>
 
+
+void util_coverdrive_left_move(uint8_t direction)
+{
+	uint8_t pos = checkLeftCoverPosition();
+	
+	if((pos != CLOSED_POSTION) && (direction == MOVE_CLOSE))
+	{
+		moveLeftDrive(MOVE_CLOSE);
+		
+		while(1)
+		{
+			pos = checkLeftCoverPosition();
+			if(pos == CLOSED_POSTION)
+			{
+				moveLeftDrive(STOP);
+				break;
+			}
+			longDelay(10);
+		}
+	}
+	else if((pos != OPENED_POSITION) && (direction == MOVE_OPEN))
+	{
+		moveLeftDrive(MOVE_OPEN);
+		
+		while(1)
+		{
+			pos = checkLeftCoverPosition();
+			if(pos == OPENED_POSITION)
+			{
+				moveLeftDrive(STOP);
+				break;
+			}
+			longDelay(10);
+		}
+	}
+}
+
+void util_coverdrive_right_move(uint8_t direction)
+{
+	uint8_t pos = checkRightCoverPosition();
+	
+	if((pos != CLOSED_POSTION) && (direction == MOVE_CLOSE))
+	{
+		moveRightDrive(MOVE_CLOSE);
+		
+		while(1)
+		{
+			pos = checkRightCoverPosition();
+			if(pos == CLOSED_POSTION)
+			{
+				moveRightDrive(STOP);
+				break;
+			}
+			longDelay(10);
+		}
+	}
+	else if((pos != OPENED_POSITION) && (direction == MOVE_OPEN))
+	{
+		moveRightDrive(MOVE_OPEN);
+		
+		while(1)
+		{
+			pos = checkRightCoverPosition();
+			if(pos == OPENED_POSITION)
+			{
+				moveRightDrive(STOP);
+				break;
+			}
+			longDelay(10);
+		}
+	}
+}
+
+
+
 void stepCoverDrive(uint8_t direction)
 {
 	switch(direction)

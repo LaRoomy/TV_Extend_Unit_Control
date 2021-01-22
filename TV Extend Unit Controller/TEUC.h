@@ -440,6 +440,8 @@ void CheckBoardButtons()
 		{
 			// add left button action here...
 			
+			util_coverdrive_left_move(MOVE_CLOSE);
+			
 			longDelay(200);
 		}
 	}
@@ -450,6 +452,7 @@ void CheckBoardButtons()
 		if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_RIGHT))
 		{
 			// add right button action here...
+			util_coverdrive_left_move(MOVE_OPEN);
 			
 			longDelay(200);
 		}
