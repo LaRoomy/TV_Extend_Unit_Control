@@ -71,7 +71,7 @@ int main(void)
 	//HMxx_setName(LAROOMY_XNG001_BLUETOOTHNAME);
 	//longDelay(200);
 	//Usart0_Clear_RX_Buffer();
-
+	
 
 	// get the current position of the driver-units and update the properties
 	UpdateAppliancePosition(TRUE);
@@ -162,10 +162,10 @@ int main(void)
 			{
 				if(HMxx_onNotify(USART0_RX_Buffer))
 				{
-					if(!HMxx_getConnectionStatus())
-					{
-						//connectRequestSet = false;
-					}
+					//if(!HMxx_getConnectionStatus())
+					//{
+						////connectRequestSet = false;
+					//}
 					Usart0_Clear_RX_Buffer();
 				}
 			}
@@ -175,6 +175,19 @@ int main(void)
 			AnalyzeTransmission(USART0_RX_Buffer);
 			Usart0_Clear_RX_Buffer();
 		}
+		
+/**************************************************************************************************************************/
+		// temporary:
+		
+		if(HMxx_getConnectionStatus())
+		{
+			sbi(PORTA, PORTA5);
+		}
+		else
+		{
+			cbi(PORTA, PORTA5);
+		}
+
     }
 }
 

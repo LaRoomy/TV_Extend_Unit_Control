@@ -432,11 +432,11 @@ void updateCurrentMonitorData()
 
 void CheckBoardButtons()
 {
-	if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_LEFT))
+	if(!(EXTRA_BOARD_BUTTON_PIN & (1<<EXTRA_BOARD_BUTTON_LEFT)))
 	{
 		longDelay(50);
 
-		if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_LEFT))
+		if(!(EXTRA_BOARD_BUTTON_PIN & (1<<EXTRA_BOARD_BUTTON_LEFT)))
 		{
 			// add left button action here...
 			
@@ -445,11 +445,11 @@ void CheckBoardButtons()
 			longDelay(200);
 		}
 	}
-	if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_RIGHT))
+	if(!(EXTRA_BOARD_BUTTON_PIN & (1<<EXTRA_BOARD_BUTTON_RIGHT)))
 	{
 		longDelay(50);
 
-		if(!(EXTRA_BOARD_BUTTON_PIN & EXTRA_BOARD_BUTTON_RIGHT))
+		if(!(EXTRA_BOARD_BUTTON_PIN & (1<<EXTRA_BOARD_BUTTON_RIGHT)))
 		{
 			// add right button action here...
 			util_coverdrive_left_move(MOVE_OPEN);
