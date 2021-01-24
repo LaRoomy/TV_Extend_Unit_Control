@@ -43,6 +43,24 @@ ISR(USART0_RX_vect)
 	Usart0_OnRXInterrupt();
 }
 
+ISR(PCINT2_vect)
+{
+	//temp:
+	sbi(PORTA, PORTA5);// test
+	
+	
+	ControlDriveProcess();
+}
+
+ISR(PCINT3_vect)
+{
+	// temp
+	sbi(PORTA, PORTA5);// test
+	
+	
+	ControlDriveProcess();
+}
+
 int main(void)
 {
     _delay_ms(200);
@@ -78,6 +96,7 @@ int main(void)
 
 	// activate remaining modules
 	ActivateTimer0();
+	ActivatePinChangeInterrupts();
 	ADC_Init();
 
     while (1) 
@@ -97,7 +116,7 @@ int main(void)
 		}
 /**************************************************************************************************************************/
 		// control drive
-		ControlDriveProcess();
+		//ControlDriveProcess();
 
 /**************************************************************************************************************************/
 		// check board buttons
@@ -126,7 +145,7 @@ int main(void)
 			switch_preventer = FALSE;
 
 			// raise component events
-			TV_Unit_HandleOneSecondEvent();
+			//TV_Unit_HandleOneSecondEvent();
 
 			// temp: !!!*******************************************
 			//pc1_enable(2);
@@ -177,16 +196,45 @@ int main(void)
 		}
 		
 /**************************************************************************************************************************/
+		// Check execution flags
+		if(executionFlags != 0)
+		{
+			if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY))
+			{
+				UpdateAppliancePosition(TRUE);
+				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
+				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION);
+			}
+			else if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION))
+			{
+				UpdateAppliancePosition(FALSE);
+				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION);
+			}
+			//////////////////////////////////////////////////////////////////////
+			if(checkExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT))
+			{
+				TV_Unit_Drive_Move_Out();
+				clearExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT);
+			}
+			if(checkExecutionFlag(FLAG_COVERDRIVE_START_CLOSE))
+			{
+				CD_Unit_Drive_Close();
+				clearExecutionFlag(FLAG_COVERDRIVE_START_CLOSE);
+			}
+		}
+		
+		
+/**************************************************************************************************************************/
 		// temporary:
 		
-		if(HMxx_getConnectionStatus())
-		{
-			sbi(PORTA, PORTA5);
-		}
-		else
-		{
-			cbi(PORTA, PORTA5);
-		}
+		//if(HMxx_getConnectionStatus())
+		//{
+			//sbi(PORTA, PORTA5);
+		//}
+		//else
+		//{
+			//cbi(PORTA, PORTA5);
+		//}
 
     }
 }

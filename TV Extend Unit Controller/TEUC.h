@@ -44,6 +44,7 @@ void TVDriveReachedFrontPosition();
 #include "Atmega324 specific/atmega324_timer.h"
 #include "Device Property Control/LaRoomyAppCon.h"
 #include "Atmega324 specific/atmega324_adc.h"
+#include "Atmega324 specific/atmega324_pcint.h"
 
 
 // check if the doors are closed
@@ -108,6 +109,8 @@ void UpdateAppliancePosition(BOOL updateProperty)
 	}
 	if(updateProperty)
 	{
+		// TODO: this will also be invoked in interrupt vector, so do that in main with the timer!?
+		
 		updateDevicePropertyFromAppliancePosition();
 	}
 }
@@ -160,6 +163,8 @@ void StartApplianceDrive()
 			if((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP))
 			{
 				// the last drive was interrupted -> make security drive ???
+				
+				// TODO!!!!
 			}
 		}
 		else
@@ -352,23 +357,29 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 void CoverDriveReachedOpenedPosition()
 {
 	// the cover-drive reached the open-position, so start tv-drive
-	TV_Unit_Drive_Move_Out();
+	//TV_Unit_Drive_Move_Out();
+	
+	setExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT);
 }
 
 void TVDriveReachedBackPosition()
 {
 	// the tv-drive reached the 'in' position, so start cover-drive to close the cover
-	CD_Unit_Drive_Close();
+	//CD_Unit_Drive_Close();
+	
+	setExecutionFlag(FLAG_COVERDRIVE_START_CLOSE);
 }
 
 void CoverDriveReachedClosedPosition()
 {
-	UpdateAppliancePosition(TRUE);
+	// the drive-process is finished -> schedule the update of the parameter for main
+	setExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
 }
 
 void TVDriveReachedFrontPosition()
 {
-	UpdateAppliancePosition(TRUE);
+	// the drive-process is finished -> schedule the update of the parameter for main
+	setExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
 }
 
 void updateMotorCurrentValues()
@@ -440,7 +451,7 @@ void CheckBoardButtons()
 		{
 			// add left button action here...
 			
-			util_coverdrive_left_move(MOVE_CLOSE);
+			//util_coverdrive_right_move(MOVE_CLOSE);
 			
 			longDelay(200);
 		}
@@ -452,7 +463,10 @@ void CheckBoardButtons()
 		if(!(EXTRA_BOARD_BUTTON_PIN & (1<<EXTRA_BOARD_BUTTON_RIGHT)))
 		{
 			// add right button action here...
-			util_coverdrive_left_move(MOVE_OPEN);
+			
+			//util_coverdrive_right_move(MOVE_OPEN);
+			
+			cbi(PORTA, PORTA5);// additional load reset
 			
 			longDelay(200);
 		}

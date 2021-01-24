@@ -12,6 +12,11 @@
 #define FALSE	0
 #define TRUE	1
 
+#define FLAG_UPDATE_APPLIANCE_POSITION				0x01
+#define FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY	0x02
+#define FLAG_COVERDRIVE_START_CLOSE					0x04
+#define FLAG_TVDRIVE_START_MOVE_OUT					0x08
+
 typedef uint8_t BOOL;
 
 uint8_t deviceBindingStatus;
@@ -31,6 +36,8 @@ uint8_t	currentAppliancePosition;
 
 uint8_t currentMonitorUpdateCounter;
 
+volatile uint8_t executionFlags;
+
 
 void InitGlobalValues()
 {
@@ -38,6 +45,7 @@ void InitGlobalValues()
 	switch_preventer = FALSE;
 	activeMultiComplexPropertyID = 0;
 	currentMonitorUpdateCounter = 0;
+	executionFlags = 0;
 
 	currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;
 
@@ -49,6 +57,21 @@ void InitGlobalValues()
 	for(uint8_t i = 0; i < 11; i++)
 		deviceBindingPasskey[i] = '\0';
 
+}
+
+void setExecutionFlag(uint8_t flag)
+{
+	executionFlags |= flag;
+}
+
+void clearExecutionFlag(uint8_t flag)
+{
+	executionFlags &= (~flag);
+}
+
+uint8_t checkExecutionFlag(uint8_t flag)
+{
+	return executionFlags & flag;
 }
 
 // TODO: save necessary values to eeprom

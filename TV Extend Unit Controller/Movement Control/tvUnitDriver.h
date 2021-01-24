@@ -10,14 +10,9 @@
 
 #include "driverDef.h"
 
-#define PREFERRED_DRIVETYPE	DRIVETYPE_SINGLE_DRIVE
-//#define PREFERRED_DRIVETYPE	DRIVETYPE_FUSIONSINGLE_DRIVE
-
-uint8_t tv_unit_current_position = POSITION_UNDEFINED;
-uint8_t tv_unit_current_drive_mode = DRIVEMODE_NONE;
-uint8_t tv_unit_drive_type = PREFERRED_DRIVETYPE;//DRIVETYPE_FUSION_DRIVE;//DRIVETYPE_SINGLE_DRIVE;
-
-uint8_t tvu_sec_counter = 0;
+volatile uint8_t tv_unit_current_position = POSITION_UNDEFINED;
+volatile uint8_t tv_unit_current_drive_mode = DRIVEMODE_NONE;
+volatile uint8_t tv_unit_drive_type = DRIVETYPE_SINGLE_DRIVE;
 
 
 void setup_tvUnit_driveType(uint8_t driveType)
@@ -438,156 +433,6 @@ void control_drive_single()
 	}
 }
 
-void control_drive_fusion()
-{
-	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
-	{
-		uint8_t linearPos = linear_drive_check_position();
-		uint8_t tiltPos = tilt_drive_check_position();
-
-		if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_OUT)
-		{
-			if(linearPos == MID_POSITION)
-			{
-				tv_unit_current_drive_mode = DRIVEMODE_LINEAROUT_TILTOUT;
-
-				move_tilt_drive(MOVE_OUT);
-			}
-		}
-		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAROUT_TILTOUT)
-		{
-			if(linearPos == FRONT_POSITION)
-			{
-				move_linear_drive(STOP);
-			}
-			if(tiltPos == FRONT_POSITION)
-			{
-				move_tilt_drive(STOP);
-			}
-			if((tiltPos == FRONT_POSITION) && (linearPos == FRONT_POSITION))
-			{
-				tv_unit_current_drive_mode = DRIVEMODE_NONE;
-
-				updateTVUnitPosition();
-				//updateDevicePropertyFromAppliancePosition();
-
-				TVDriveReachedFrontPosition();
-			}
-		}
-		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
-		{
-			if(tvu_sec_counter >= 15)
-			{
-				// only for security (should not be executed before the 15 second timer is reached)
-				if(tiltPos == BACK_POSITION)
-				{
-					move_tilt_drive(STOP);
-					move_linear_drive(STOP);
-					tv_unit_current_drive_mode = DRIVEMODE_TIMING_ERROR;
-				}
-				else
-				{
-					tv_unit_current_drive_mode = DRIVEMODE_TILTIN_LINEARIN;
-					tvu_sec_counter = 0;
-					move_linear_drive(MOVE_IN);
-				}
-			}
-
-		}
-		else if(tv_unit_current_drive_mode == DRIVEMODE_TILTIN_LINEARIN)
-		{
-			if(tiltPos == BACK_POSITION)
-			{
-				move_tilt_drive(STOP);
-				tv_unit_current_drive_mode = DRIVEMODE_LINEAR_IN;
-			}
-
-			if(linearPos == BACK_POSITION)// only for security (this should not happen before the tilt drive is in home position)
-			{
-				move_linear_drive(STOP);
-			}
-		}
-		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_IN)
-		{
-			if(linearPos == BACK_POSITION)
-			{
-				move_linear_drive(STOP);
-
-				tv_unit_current_drive_mode = DRIVEMODE_NONE;
-
-				updateTVUnitPosition();
-				//updateDevicePropertyFromAppliancePosition();
-
-				TVDriveReachedBackPosition();
-			}
-		}
-	}
-}
-
-void control_drive_fusionSingle()
-{
-	if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
-	{
-		uint8_t linearPos = linear_drive_check_position();
-		uint8_t tiltPos = tilt_drive_check_position();
-
-		if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_OUT)
-		{
-			if(linearPos == MID_POSITION)
-			{
-				tv_unit_current_drive_mode = DRIVEMODE_LINEAROUT_TILTOUT;
-
-				move_tilt_drive(MOVE_OUT);
-			}
-		}
-		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAROUT_TILTOUT)
-		{
-			if(linearPos == FRONT_POSITION)
-			{
-				move_linear_drive(STOP);
-			}
-			if(tiltPos == FRONT_POSITION)
-			{
-				move_tilt_drive(STOP);
-			}
-			if((tiltPos == FRONT_POSITION) && (linearPos == FRONT_POSITION))
-			{
-				tv_unit_current_drive_mode = DRIVEMODE_NONE;
-
-				updateTVUnitPosition();
-				//updateDevicePropertyFromAppliancePosition();
-
-				TVDriveReachedFrontPosition();
-			}
-		}
-		else if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
-		{
-			if(tiltPos == BACK_POSITION)
-			{
-				move_tilt_drive(STOP);
-
-				tv_unit_current_drive_mode = DRIVEMODE_LINEAR_IN;
-
-				move_linear_drive(MOVE_IN);
-			}
-		}
-		else if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_IN)
-		{
-			if(linearPos == BACK_POSITION)
-			{
-				move_linear_drive(STOP);
-
-				tv_unit_current_drive_mode = DRIVEMODE_NONE;
-
-				updateTVUnitPosition();
-				//updateDevicePropertyFromAppliancePosition();
-
-				TVDriveReachedBackPosition();
-			}
-		}
-	}
-}
-
 
 void control_drive_security()
 {
@@ -614,7 +459,7 @@ void control_drive_security()
 				move_linear_drive(STOP);
 
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
-				tv_unit_drive_type = PREFERRED_DRIVETYPE;
+				tv_unit_drive_type = DRIVETYPE_SINGLE_DRIVE;
 
 				updateTVUnitPosition();
 				//updateDevicePropertyFromAppliancePosition();
@@ -631,12 +476,6 @@ void TV_Unit_Control_DriveProcess()
 	{
 		case DRIVETYPE_SINGLE_DRIVE:
 			control_drive_single();
-			break;
-		case DRIVETYPE_FUSION_DRIVE:
-			control_drive_fusion();
-			break;
-		case DRIVETYPE_FUSIONSINGLE_DRIVE:
-			control_drive_fusionSingle();
 			break;
 		case DRIVETYPE_SECURITY_DRIVE:
 			control_drive_security();
@@ -655,13 +494,13 @@ void TV_Unit_EmergencyStop()
 	//updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);
 }
 
-void TV_Unit_HandleOneSecondEvent()
-{
-	if((tv_unit_drive_type == DRIVETYPE_FUSION_DRIVE) && (tv_unit_current_drive_mode == DRIVEMODE_TILT_IN))
-	{
-		tvu_sec_counter++;
-	}
-}
+//void TV_Unit_HandleOneSecondEvent()
+//{
+	//if((tv_unit_drive_type == DRIVETYPE_FUSION_DRIVE) && (tv_unit_current_drive_mode == DRIVEMODE_TILT_IN))
+	//{
+		//tvu_sec_counter++;
+	//}
+//}
 
 BOOL isTV_Unit_Drive_In_Progress()
 {

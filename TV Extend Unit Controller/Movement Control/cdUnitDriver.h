@@ -11,8 +11,8 @@
 
 #include "driverDef.h"
 
-uint8_t cdUnit_currentPosition = POSITION_UNDEFINED;
-uint8_t cdUnit_currentDriveMode = DRIVEMODE_NONE;
+volatile uint8_t cdUnit_currentPosition = POSITION_UNDEFINED;
+volatile uint8_t cdUnit_currentDriveMode = DRIVEMODE_NONE;
 
 void enable_cdUnit_Driver(BOOL enable)
 {
@@ -35,11 +35,21 @@ uint8_t checkLeftCoverPosition()
 	// get sensor data:
 	if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_LEFT_CLOSE)))
 	{
-		closePos = TRUE;	
+		longDelay(50);
+		
+		if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_LEFT_CLOSE)))
+		{
+			closePos = TRUE;	
+		}
 	}
 	if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_LEFT_OPEN)))
 	{
-		openPos = TRUE;
+		longDelay(50);
+		
+		if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_LEFT_OPEN)))
+		{
+			openPos = TRUE;
+		}
 	}
 	// analyze sensor data:
 	if(closePos && openPos)
@@ -68,11 +78,21 @@ uint8_t checkRightCoverPosition()
 	// get sensor data:
 	if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_RIGHT_CLOSE)))
 	{
-		closePos = TRUE;
+		longDelay(50);
+		
+		if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_RIGHT_CLOSE)))
+		{
+			closePos = TRUE;
+		}
 	}
 	if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_RIGHT_OPEN)))
 	{
-		openPos = TRUE;
+		longDelay(50);
+		
+		if(!(COVERDRIVE_SENSOR_PIN & (1<<COVERDRIVE_SENSOR_RIGHT_OPEN)))
+		{
+			openPos = TRUE;
+		}
 	}
 	// analyze sensor data:
 	if(closePos && openPos)
