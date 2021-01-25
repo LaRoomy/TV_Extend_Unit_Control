@@ -45,19 +45,11 @@ ISR(USART0_RX_vect)
 
 ISR(PCINT2_vect)
 {
-	//temp:
-	sbi(PORTA, PORTA5);// test
-	
-	
 	ControlDriveProcess();
 }
 
 ISR(PCINT3_vect)
 {
-	// temp
-	sbi(PORTA, PORTA5);// test
-	
-	
 	ControlDriveProcess();
 }
 
@@ -220,6 +212,17 @@ int main(void)
 			{
 				CD_Unit_Drive_Close();
 				clearExecutionFlag(FLAG_COVERDRIVE_START_CLOSE);
+			}
+			//////////////////////////////////////////////////////////////////////
+			if(executionFlags & 0xF0) // error flags
+			{
+				
+				// temp:
+				sbi(PORTA, PORTA5);
+				
+				
+				updateDevicePropertyToErrorStateFromExecutionFlag();
+				executionFlags &= ~0xF0; // erase flags
 			}
 		}
 		

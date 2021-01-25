@@ -29,6 +29,7 @@
 
 void updateDevicePropertyToSpecificCondition(uint8_t direction);
 void updateDevicePropertyFromAppliancePosition();
+void updateDevicePropertyToErrorStateFromExecutionFlag();
 
 #include "TEUC PPDef.h"
 
@@ -354,19 +355,35 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 	}
 }
 
+void updateDevicePropertyToErrorStateFromExecutionFlag()
+{
+	if(checkExecutionFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR_BY_EXECUTION))
+	{
+		// TODO!
+	}
+	else if(checkExecutionFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR_BY_EXECUTION))
+	{
+		// TODO!
+	}
+	else if(checkExecutionFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION))
+	{
+		// TODO!
+	}
+	else if(checkExecutionFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION))
+	{
+		// TODO!
+	}
+}
+
 void CoverDriveReachedOpenedPosition()
 {
 	// the cover-drive reached the open-position, so start tv-drive
-	//TV_Unit_Drive_Move_Out();
-	
 	setExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT);
 }
 
 void TVDriveReachedBackPosition()
 {
 	// the tv-drive reached the 'in' position, so start cover-drive to close the cover
-	//CD_Unit_Drive_Close();
-	
 	setExecutionFlag(FLAG_COVERDRIVE_START_CLOSE);
 }
 

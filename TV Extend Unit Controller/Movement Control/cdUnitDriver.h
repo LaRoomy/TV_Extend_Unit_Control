@@ -285,6 +285,27 @@ void CD_Unit_Control_Drive_Process()
 		// get positions
 		uint8_t leftPos = checkLeftCoverPosition();
 		uint8_t rightPos = checkRightCoverPosition();
+		
+		// check left cover-drive error condition
+		if(leftPos == POSITION_SENSOR_ERROR)
+		{
+			// fatal error contradictory sensor data -> stop immediately
+			moveLeftDrive(STOP);
+			moveRightDrive(STOP);
+			cdUnit_currentDriveMode = DRIVEMODE_EMERGENCY_STOP;
+			setExecutionFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
+			return;
+		}
+		// check right cover-drive error condition
+		if(rightPos == POSITION_SENSOR_ERROR)
+		{
+			// fatal error contradictory sensor data -> stop immediately
+			moveLeftDrive(STOP);
+			moveRightDrive(STOP);
+			cdUnit_currentDriveMode = DRIVEMODE_EMERGENCY_STOP;
+			setExecutionFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
+			return;
+		}
 
 		if(cdUnit_currentDriveMode == DRIVEMODE_CD_OPEN)
 		{

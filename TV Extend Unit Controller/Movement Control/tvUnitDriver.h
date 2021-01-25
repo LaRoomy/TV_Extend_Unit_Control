@@ -377,6 +377,27 @@ void control_drive_single()
 	{
 		uint8_t linearPos = linear_drive_check_position();
 		uint8_t tiltPos = tilt_drive_check_position();
+		
+		// check linear pos error condition
+		if(linearPos == POSITION_SENSOR_ERROR)
+		{
+			// fatal error: contradictory sensor data -> stop immediately!
+			move_linear_drive(STOP);
+			move_tilt_drive(STOP);
+			tv_unit_current_drive_mode = DRIVEMODE_EMERGENCY_STOP;
+			setExecutionFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR_BY_EXECUTION);
+			return;
+		}
+		// check tilt pos error condition
+		if(tiltPos == POSITION_SENSOR_ERROR)
+		{
+			// fatal error: contradictory sensor data -> stop immediately!
+			move_linear_drive(STOP);
+			move_tilt_drive(STOP);
+			tv_unit_current_drive_mode = DRIVEMODE_EMERGENCY_STOP;	
+			setExecutionFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR_BY_EXECUTION);
+			return;			
+		}
 
 		if(tv_unit_current_drive_mode == DRIVEMODE_LINEAR_OUT)
 		{
@@ -440,6 +461,25 @@ void control_drive_security()
 	{
 		uint8_t linearPos = linear_drive_check_position();
 		uint8_t tiltPos = tilt_drive_check_position();
+		
+		// check linear pos error condition
+		if(linearPos == POSITION_SENSOR_ERROR)
+		{
+			// fatal error: contradictory sensor data -> stop immediately!
+			move_linear_drive(STOP);
+			move_tilt_drive(STOP);
+			setExecutionFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR_BY_EXECUTION);
+			return;
+		}
+		// check tilt pos error condition
+		if(tiltPos == POSITION_SENSOR_ERROR)
+		{
+			// fatal error: contradictory sensor data -> stop immediately!
+			move_linear_drive(STOP);
+			move_tilt_drive(STOP);
+			setExecutionFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR_BY_EXECUTION);
+			return;
+		}		
 
 		if(tv_unit_current_drive_mode == DRIVEMODE_TILT_IN)
 		{
