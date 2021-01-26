@@ -118,13 +118,13 @@ void updateCDUnitPosition()
 	uint8_t leftPosition = checkLeftCoverPosition();
 	uint8_t rightPosition = checkRightCoverPosition();
 
-	if((leftPosition == POSITION_UNDEFINED) || (rightPosition == POSITION_UNDEFINED))
-	{
-		cdUnit_currentPosition = POSITION_UNDEFINED;
-	}
-	else if((leftPosition == POSITION_SENSOR_ERROR) || (rightPosition == POSITION_SENSOR_ERROR))
+	if((leftPosition == POSITION_SENSOR_ERROR) || (rightPosition == POSITION_SENSOR_ERROR))
 	{
 		cdUnit_currentPosition = POSITION_SENSOR_ERROR;
+	}
+	else if((leftPosition == POSITION_UNDEFINED) || (rightPosition == POSITION_UNDEFINED))
+	{
+		cdUnit_currentPosition = POSITION_UNDEFINED;
 	}
 	else
 	{
@@ -268,11 +268,11 @@ BOOL CD_Unit_Drive_Open()
 
 				if(leftPos == POSITION_SENSOR_ERROR)
 				{
-					setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
+					setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR);
 				}
 				if(rightPos == POSITION_SENSOR_ERROR)
 				{
-					setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
+					setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR);
 				}
 				return FALSE;
 			}			
@@ -328,11 +328,11 @@ BOOL CD_Unit_Drive_Close()
 
 				if(leftPos == POSITION_SENSOR_ERROR)
 				{
-					setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
+					setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR);
 				}
 				if(rightPos == POSITION_SENSOR_ERROR)
 				{
-					setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
+					setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR);
 				}
 				return FALSE;
 			}
@@ -373,7 +373,7 @@ void CD_Unit_Control_Drive_Process()
 			moveLeftDrive(STOP);
 			moveRightDrive(STOP);
 			cdUnit_currentDriveMode = DRIVEMODE_EMERGENCY_STOP;
-			setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
+			setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR);
 			return;
 		}
 		// check right cover-drive error condition
@@ -383,7 +383,7 @@ void CD_Unit_Control_Drive_Process()
 			moveLeftDrive(STOP);
 			moveRightDrive(STOP);
 			cdUnit_currentDriveMode = DRIVEMODE_EMERGENCY_STOP;
-			setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
+			setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR);
 			return;
 		}
 

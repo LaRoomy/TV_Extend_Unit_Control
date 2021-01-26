@@ -29,7 +29,7 @@
 
 void updateDevicePropertyToSpecificCondition(uint8_t direction);
 void updateDevicePropertyFromAppliancePosition();
-void updateDevicePropertyToErrorStateFromExecutionFlag();
+void updateDevicePropertyToErrorStateFromErrorFlag();
 
 #include "TEUC PPDef.h"
 
@@ -41,7 +41,8 @@ void TVDriveReachedFrontPosition();
 #include "Movement Control/tvUnitDriver.h"
 #include "Movement Control/cdUnitDriver.h"
 
-void StartApplianceDrive();
+BOOL StartApplianceDrive();
+void EmergencyStop(uint8_t reason);
 
 #include "Atmega324 specific/atmega324_timer.h"
 #include "Device Property Control/LaRoomyAppCon.h"
@@ -103,6 +104,36 @@ void UpdateAppliancePosition(BOOL updateProperty)
 		{
 			// SENSOR ERROR MEANS: OPPOSED SENSORS ARE ENGAGED -> NO DRIVE IS POSSIBLE !!!
 			currentAppliancePosition = APPLIANCE_POSITION_SENSOR_ERROR;
+			
+			// determine the defective sensor pair:
+			if(tv_unit_current_position == POSITION_SENSOR_ERROR)
+			{
+				uint8_t linPos = linear_drive_check_position();
+				uint8_t tiltPos = tilt_drive_check_position();
+				
+				if(linPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR);
+				}
+				if(tiltPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR);
+				}
+			}
+			if(cdUnit_currentPosition == POSITION_SENSOR_ERROR)
+			{
+				uint8_t leftPos = checkLeftCoverPosition();
+				uint8_t rightPos = checkRightCoverPosition();
+				
+				if(leftPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR);
+				}
+				if(rightPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR);
+				}
+			}
 		}
 		else
 		{
@@ -184,6 +215,11 @@ BOOL StartApplianceDrive()
 
 		if(isCDDriving || isTVDriving)
 		{
+			
+			
+			// this could not happen, or what???? Drivemode can not be emergency stop!?
+			
+			
 			// drive is in progress or in interrupted state -> check
 			if((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP))
 			{
@@ -228,7 +264,6 @@ BOOL StartApplianceDrive()
 			else
 			{
 				// must be in undefined state -> security drive!
-
 				StartSecurityDrive();
 			}
 		}
@@ -385,29 +420,29 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 	}
 }
 
-void updateDevicePropertyToErrorStateFromExecutionFlag()
+void updateDevicePropertyToErrorStateFromErrorFlag()
 {
 	updateDevicePropertyToSpecificCondition(UDP_DRIVING_ERROR);
 
-	if(checkErrorFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR_BY_EXECUTION))
+	if(checkErrorFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR))
 	{
 		// TODO!
 
 		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Linearantrieb - Sensorfehler!");
 	}
-	else if(checkErrorFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR_BY_EXECUTION))
+	else if(checkErrorFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR))
 	{
 		// TODO!
 
 		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Kippantrieb - Sensorfehler!");
 	}
-	else if(checkErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION))
+	else if(checkErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR))
 	{
 		// TODO!
 
 		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende links - Sensorfehler!");
 	}
-	else if(checkErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION))
+	else if(checkErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR))
 	{
 		// TODO!
 

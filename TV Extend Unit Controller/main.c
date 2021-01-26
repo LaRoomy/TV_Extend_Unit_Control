@@ -195,6 +195,10 @@ int main(void)
 
 		if(executionFlags != 0)
 		{
+			
+			// TODO: important: do not execute opposed flags!!!
+			
+			
 			if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY))
 			{
 				// an asynchronous position and property update is requested
@@ -240,7 +244,7 @@ int main(void)
 			sbi(PORTA, PORTA5);
 			///////////////////
 
-			updateDevicePropertyToErrorStateFromExecutionFlag();
+			updateDevicePropertyToErrorStateFromErrorFlag();
 			errorFlags = 0; // erase all flags
 		}
 		
