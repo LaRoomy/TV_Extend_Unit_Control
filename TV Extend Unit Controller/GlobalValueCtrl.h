@@ -12,14 +12,23 @@
 #define FALSE	0
 #define TRUE	1
 
+// execution flags:
 #define FLAG_UPDATE_APPLIANCE_POSITION					0x01
 #define FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY		0x02
 #define FLAG_COVERDRIVE_START_CLOSE						0x04
 #define FLAG_TVDRIVE_START_MOVE_OUT						0x08
+#define FLAG_TVDRIVE_START_SECUREPOSITION				0x10
+
+// error flags:
+#define FLAG_DOORSENSOR_ERROR							0x01
+// ...
 #define FLAG_TVDRIVE_TILT_SENSOR_ERROR_BY_EXECUTION		0x10
 #define FLAG_TVDRIVE_LIN_SENSOR_ERROR_BY_EXECUTION		0x20
 #define FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION	0x40
 #define FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION		0x80
+
+#define EMERGENCY_STOP_REASON_DOORS_NOT_CLOSED			1
+#define EMERGENCY_STOP_REASON_USER_STOPPED				2
 
 
 typedef uint8_t BOOL;
@@ -38,10 +47,12 @@ uint16_t coverDriveRightCurrentValue;
 
 uint8_t	currentAppliancePosition;
 
+BOOL executeCurrentDriveAsSecurityDrive;
 
 uint8_t currentMonitorUpdateCounter;
 
 volatile uint8_t executionFlags;
+volatile uint8_t errorFlags;
 
 
 void InitGlobalValues()
@@ -51,6 +62,9 @@ void InitGlobalValues()
 	activeMultiComplexPropertyID = 0;
 	currentMonitorUpdateCounter = 0;
 	executionFlags = 0;
+	errorFlags = 0;
+
+	executeCurrentDriveAsSecurityDrive = FALSE;
 
 	currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;
 
@@ -78,6 +92,23 @@ uint8_t checkExecutionFlag(uint8_t flag)
 {
 	return executionFlags & flag;
 }
+
+void setErrorFlag(uint8_t flag)
+{
+	errorFlags |= flag;
+}
+
+void clearErrorFlag(uint8_t flag)
+{
+	errorFlags &= (~flag);
+}
+
+uint8_t checkErrorFlag(uint8_t flag)
+{
+	return errorFlags & flag;
+}
+
+
 
 // TODO: save necessary values to eeprom
 //			- deviceBindingStatus

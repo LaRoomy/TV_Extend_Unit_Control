@@ -195,21 +195,13 @@ void dispatchProperty(volatile char* data)
 void onHandleButtonCommand(uint8_t buttonID)
 {
 	// TODO: implement the button functions here!
-	//if(buttonID == EXAMPLE_BUTTON_1)
-	//{
-		////tbi(LED_PORT, LED1_OUTPUT);
-	//}
-	//else
-	//{
-		//// send error?
-	//}
-	//eeSavePropertyState(buttonID);
 
 	if(buttonID == INOUT_DRIVE_STARTBUTTON)
 	{
-		if(!TV_Unit_Drive_basedOnPosition())
+		// if drive is in progress -> STOP!
+		if(!StartApplianceDrive())
 		{
-			TV_Unit_EmergencyStop();
+			EmergencyStop(EMERGENCY_STOP_REASON_USER_STOPPED);
 		}
 	}
 }

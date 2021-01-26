@@ -103,7 +103,10 @@ int main(void)
 			{
 				switch_preventer = TRUE;
 
-				StartApplianceDrive();
+				if(!StartApplianceDrive())
+				{
+					EmergencyStop(EMERGENCY_STOP_REASON_USER_STOPPED);
+				}
 			}
 		}
 /**************************************************************************************************************************/
@@ -120,7 +123,7 @@ int main(void)
 		// 1. door sensor(s)
 		if(!checkDoorSensor())
 		{
-			EmergencyStop();
+			EmergencyStop(EMERGENCY_STOP_REASON_DOORS_NOT_CLOSED);
 		}
 		// 2. motor current
 
@@ -188,42 +191,57 @@ int main(void)
 		}
 		
 /**************************************************************************************************************************/
-		// Check execution flags
+		// Check flags
+
 		if(executionFlags != 0)
 		{
 			if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY))
 			{
+				// an asynchronous position and property update is requested
 				UpdateAppliancePosition(TRUE);
 				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
 				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION);
 			}
 			else if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION))
 			{
+				// an asynchronous position update is requested
 				UpdateAppliancePosition(FALSE);
 				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION);
 			}
 			//////////////////////////////////////////////////////////////////////
 			if(checkExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT))
 			{
+				// the cover-drive is opened now -> start moving the tv-unit
 				TV_Unit_Drive_Move_Out();
 				clearExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT);
 			}
 			if(checkExecutionFlag(FLAG_COVERDRIVE_START_CLOSE))
 			{
+				// the tv-unit is moved in -> start closing the cover-drive
 				CD_Unit_Drive_Close();
 				clearExecutionFlag(FLAG_COVERDRIVE_START_CLOSE);
 			}
-			//////////////////////////////////////////////////////////////////////
-			if(executionFlags & 0xF0) // error flags
+			if(checkExecutionFlag(FLAG_TVDRIVE_START_SECUREPOSITION))
 			{
-				
-				// temp:
-				sbi(PORTA, PORTA5);
-				
-				
-				updateDevicePropertyToErrorStateFromExecutionFlag();
-				executionFlags &= ~0xF0; // erase flags
+				// the cover-drive position is secured -> now start securing the tv-unit position
+				TV_Unit_StartSecurityDrive();
+				clearExecutionFlag(FLAG_TVDRIVE_START_SECUREPOSITION);
+
+				// from now on this should be a normal drive-in execution, so reset parameter
+				executeCurrentDriveAsSecurityDrive = FALSE;
 			}
+			//////////////////////////////////////////////////////////////////////
+
+			// ...
+		}
+		if(errorFlags != 0)
+		{
+			// temp:
+			sbi(PORTA, PORTA5);
+			///////////////////
+
+			updateDevicePropertyToErrorStateFromExecutionFlag();
+			errorFlags = 0; // erase all flags
 		}
 		
 		

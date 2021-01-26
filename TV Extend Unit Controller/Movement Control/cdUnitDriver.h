@@ -235,45 +235,125 @@ void moveLeftDrive(uint8_t direction)
 
 BOOL CD_Unit_Drive_Open()
 {
-	// NOTE: check drivemode - no double execution!
+	// only execute if drive is not in progress
+	if((cdUnit_currentDriveMode == DRIVEMODE_NONE) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP))
+	{	
+		updateCDUnitPosition();
 
-	updateCDUnitPosition();
+		if(cdUnit_currentPosition != CLOSED_POSTION)
+		{
+			// the cover-drive is not closed -> handle all possibilities:
 
-	if(cdUnit_currentPosition != CLOSED_POSTION)
-	{
-		// invalid command - position not valid!
-		return FALSE;
+			if(cdUnit_currentPosition == OPENED_POSITION)
+			{
+				// the drive is already open -> call report function
+				CoverDriveReachedOpenedPosition();
+				return TRUE;
+			}
+			else if(cdUnit_currentPosition == POSITION_UNDEFINED)
+			{
+				// the drive is not in a defined state -> open the drive
+				cdUnit_currentDriveMode = DRIVEMODE_CD_OPEN;
+
+				moveLeftDrive(MOVE_OPEN);
+				moveRightDrive(MOVE_OPEN);
+
+				return TRUE;
+			}
+			else if(cdUnit_currentPosition == POSITION_SENSOR_ERROR)
+			{
+				// sensor error -> do nothing and set specific error flag
+				uint8_t leftPos = checkLeftCoverPosition();
+				uint8_t rightPos = checkRightCoverPosition();
+
+				if(leftPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
+				}
+				if(rightPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
+				}
+				return FALSE;
+			}			
+			return FALSE;
+		}
+		else
+		{
+			// this is the normal execution
+			// the cover is in closed position and the open process starts
+
+			cdUnit_currentDriveMode = DRIVEMODE_CD_OPEN;
+
+			moveLeftDrive(MOVE_OPEN);
+			moveRightDrive(MOVE_OPEN);
+
+			return TRUE;
+		}
 	}
 	else
 	{
-		cdUnit_currentDriveMode = DRIVEMODE_CD_OPEN;
-
-		moveLeftDrive(MOVE_OPEN);
-		moveRightDrive(MOVE_OPEN);
-
-		return TRUE;
+		return FALSE;
 	}
 }
 
 BOOL CD_Unit_Drive_Close()
 {
-	// NOTE: check drivemode - no double execution!
-
-	updateCDUnitPosition();
-
-	if(cdUnit_currentPosition != OPENED_POSITION)
+	// only execute if drive is not in progress
+	if((cdUnit_currentDriveMode == DRIVEMODE_NONE) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP))
 	{
-		// invalid command - position not valid
-		return FALSE;
+		updateCDUnitPosition();
+
+		if(cdUnit_currentPosition != OPENED_POSITION)
+		{
+			// the cover-drive is not opened -> process all possibilities
+
+			if(cdUnit_currentPosition == CLOSED_POSTION)
+			{
+				// the cover is already closed -> call report function
+				CoverDriveReachedClosedPosition();
+				return TRUE;
+			}
+			else if(cdUnit_currentPosition == POSITION_UNDEFINED)
+			{
+				// the drive is not in a defined state -> do nothing, because this condition requires an security drive !??
+
+				return FALSE;
+			}
+			else if(cdUnit_currentPosition == POSITION_SENSOR_ERROR)
+			{
+				// sensor error -> do nothing and set specific error flag
+				uint8_t leftPos = checkLeftCoverPosition();
+				uint8_t rightPos = checkRightCoverPosition();
+
+				if(leftPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
+				}
+				if(rightPos == POSITION_SENSOR_ERROR)
+				{
+					setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
+				}
+				return FALSE;
+			}
+			return FALSE;
+		}
+		else
+		{
+			// this is the normal execution
+			// the cover is in opened position and the close process starts
+
+			cdUnit_currentDriveMode = DRIVEMODE_CD_CLOSE;
+
+			moveLeftDrive(MOVE_CLOSE);
+			moveRightDrive(MOVE_CLOSE);
+
+			return TRUE;
+		}
 	}
 	else
 	{
-		cdUnit_currentDriveMode = DRIVEMODE_CD_CLOSE;
-
-		moveLeftDrive(MOVE_CLOSE);
-		moveRightDrive(MOVE_CLOSE);
-
-		return TRUE;
+		return FALSE;
 	}
 }
 
@@ -293,7 +373,7 @@ void CD_Unit_Control_Drive_Process()
 			moveLeftDrive(STOP);
 			moveRightDrive(STOP);
 			cdUnit_currentDriveMode = DRIVEMODE_EMERGENCY_STOP;
-			setExecutionFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
+			setErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION);
 			return;
 		}
 		// check right cover-drive error condition
@@ -303,7 +383,7 @@ void CD_Unit_Control_Drive_Process()
 			moveLeftDrive(STOP);
 			moveRightDrive(STOP);
 			cdUnit_currentDriveMode = DRIVEMODE_EMERGENCY_STOP;
-			setExecutionFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
+			setErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION);
 			return;
 		}
 

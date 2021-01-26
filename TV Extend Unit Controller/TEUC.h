@@ -41,6 +41,7 @@ void TVDriveReachedFrontPosition();
 #include "Movement Control/tvUnitDriver.h"
 #include "Movement Control/cdUnitDriver.h"
 
+void StartApplianceDrive();
 
 #include "Atmega324 specific/atmega324_timer.h"
 #include "Device Property Control/LaRoomyAppCon.h"
@@ -130,7 +131,7 @@ void ControlDriveProcess()
 	CD_Unit_Control_Drive_Process();
 }
 
-void EmergencyStop()
+void EmergencyStop(uint8_t reason)
 {
 	BOOL isCDDriving = isCD_Unit_Drive_In_Progress();
 	BOOL isTVDriving = isTV_Unit_Drive_In_Progress();
@@ -145,11 +146,34 @@ void EmergencyStop()
 		{
 			TV_Unit_EmergencyStop();
 		}
-		updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);
+
+		if(reason == EMERGENCY_STOP_REASON_DOORS_NOT_CLOSED)
+		{
+			setErrorFlag(FLAG_DOORSENSOR_ERROR);
+		}
+		else if(reason == EMERGENCY_STOP_REASON_USER_STOPPED)
+		{
+
+			// TODO: save condition to proceed on request
+
+			updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);	
+		}
 	}
 }
 
-void StartApplianceDrive()
+void StartSecurityDrive()
+{
+	// set parameter
+	executeCurrentDriveAsSecurityDrive = TRUE;
+
+	// update property
+	updateDevicePropertyToSpecificCondition(UDP_SECURITY_DRIVE);
+
+	// open the cover-drive (secure position)
+	CD_Unit_Drive_Open();
+}
+
+BOOL StartApplianceDrive()
 {
 	// check preconditions
 	if(checkDrivePreconditions())
@@ -163,9 +187,18 @@ void StartApplianceDrive()
 			// drive is in progress or in interrupted state -> check
 			if((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP))
 			{
-				// the last drive was interrupted -> make security drive ???
+				// the last drive was interrupted -> make security drive or proceed the last drive ???
 				
 				// TODO!!!!
+			}
+			else
+			{
+				// the drive must be in progress -> stop or return indicator to stop!!!
+
+
+				// TODO !!!!!!!!!!!!!!!!
+
+				return FALSE;
 			}
 		}
 		else
@@ -196,7 +229,7 @@ void StartApplianceDrive()
 			{
 				// must be in undefined state -> security drive!
 
-				// TODO: !!!!!!!!!
+				StartSecurityDrive();
 			}
 		}
 	}
@@ -206,18 +239,15 @@ void StartApplianceDrive()
 
 		// TODO: !!!!!!!!
 	}
+	return TRUE;
 }
 
 void updateDevicePropertyFromAppliancePosition()
 {
-
-		// TODO: integrate the cover-drive position!!!!!!!!!!!!!!!!!!!!!!!
-
-
 	uint8_t statusTextIndex = getPropertyIndexFromID(STATUS_TEXT_DISPLAY);
 	uint8_t inOutButtonIndex = getPropertyIndexFromID(INOUT_DRIVE_STARTBUTTON);
 
-	if(tv_unit_current_position == POSITION_UNDEFINED)
+	if(currentAppliancePosition == APPLIANCE_POSITON_UNDEFINED)
 	{
 		LaroomyXNG_DeviceProperties[statusTextIndex].imageID = IMAGE_ID_QUESTIONCIRCLE_BLUE;
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].de_devicePropertyDescription, "Status: unbestimmt");
@@ -234,7 +264,7 @@ void updateDevicePropertyFromAppliancePosition()
 		}
 		
 	}
-	else if(tv_unit_current_position == FRONT_POSITION)
+	else if(currentAppliancePosition == APPLIANCE_POSITION_OUT)
 	{
 		LaroomyXNG_DeviceProperties[statusTextIndex].imageID = IMAGE_ID_TV_BLUEWHITE;
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].de_devicePropertyDescription, "Status: Ausgefahren");
@@ -250,7 +280,7 @@ void updateDevicePropertyFromAppliancePosition()
 			notifyPropertyChanged(INOUT_DRIVE_STARTBUTTON, PCHANGE_FLAG_THISPROPERTY | PCHANGE_FLAG_THISPROPERTYDETAIL);
 		}		
 	}
-	else if(tv_unit_current_position == BACK_POSITION)
+	else if(currentAppliancePosition == APPLIANCE_POSITION_IN)
 	{
 		LaroomyXNG_DeviceProperties[statusTextIndex].imageID = IMAGE_ID_TV_WHITE;
 		strcpy(LaroomyXNG_DeviceProperties[statusTextIndex].de_devicePropertyDescription, "Status: Eingefahren");
@@ -357,28 +387,54 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 
 void updateDevicePropertyToErrorStateFromExecutionFlag()
 {
-	if(checkExecutionFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR_BY_EXECUTION))
+	updateDevicePropertyToSpecificCondition(UDP_DRIVING_ERROR);
+
+	if(checkErrorFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR_BY_EXECUTION))
 	{
 		// TODO!
+
+		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Linearantrieb - Sensorfehler!");
 	}
-	else if(checkExecutionFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR_BY_EXECUTION))
+	else if(checkErrorFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR_BY_EXECUTION))
 	{
 		// TODO!
+
+		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Kippantrieb - Sensorfehler!");
 	}
-	else if(checkExecutionFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION))
+	else if(checkErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR_BY_EXECUTION))
 	{
 		// TODO!
+
+		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende links - Sensorfehler!");
 	}
-	else if(checkExecutionFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION))
+	else if(checkErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR_BY_EXECUTION))
 	{
 		// TODO!
+
+		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende rechts - Sensorfehler!");
+	}
+	else if(checkErrorFlag(FLAG_DOORSENSOR_ERROR))
+	{
+		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "T]rsensor offen!");
+	}
+	else
+	{
+		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Unbekannter Fehler.");
 	}
 }
 
 void CoverDriveReachedOpenedPosition()
 {
 	// the cover-drive reached the open-position, so start tv-drive
-	setExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT);
+	if(executeCurrentDriveAsSecurityDrive)
+	{
+		// security drive requested
+		setExecutionFlag(FLAG_TVDRIVE_START_SECUREPOSITION);
+	}
+	else
+	{
+		setExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT);
+	}
 }
 
 void TVDriveReachedBackPosition()
