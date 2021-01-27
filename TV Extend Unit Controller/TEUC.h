@@ -561,6 +561,8 @@ void CheckBoardButtons()
 			
 			//util_coverdrive_right_move(MOVE_CLOSE);
 			
+			EnableApplianceDriver(FALSE);
+			
 			longDelay(200);
 		}
 	}
