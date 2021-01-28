@@ -428,6 +428,9 @@ void CD_Unit_Control_Drive_Process()
 
 				// update position parameter
 				updateCDUnitPosition();
+				
+				// invoke callback to normalize property and disable driver
+				CoverDriveReachedClosedPosition();
 			}
 		}
 	}

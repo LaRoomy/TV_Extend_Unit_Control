@@ -134,10 +134,10 @@ int main(void)
 			switch_preventer = FALSE;
 
 			// check if drive is in progress and if not update the position
-			if(!isDriveInProgress())
-			{
-				UpdateAppliancePosition(TRUE);
-			}
+			//if(!isDriveInProgress())
+			//{
+				//UpdateAppliancePosition(TRUE);
+			//}
 		}
 		if(TwoHMilliSec_event)
 		{
@@ -198,19 +198,23 @@ int main(void)
 				// the cover-drive is opened now -> start moving the tv-unit
 				TV_Unit_Drive_Move_Out();
 				
-				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
+				//eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 			}
 			if(checkExecutionFlag(FLAG_COVERDRIVE_START_CLOSE))
 			{
 				// the tv-unit is moved in -> start closing the cover-drive
 				CD_Unit_Drive_Close();
-				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
+				
+				
+				// there is a problem with this function: !
+				
+				//eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 			}
 			if(checkExecutionFlag(FLAG_TVDRIVE_START_SECUREPOSITION))
 			{
 				// the cover-drive position is secured -> now start securing the tv-unit position
 				TV_Unit_StartSecurityDrive();
-				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
+				//eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 
 				// from now on this should be a normal drive-in execution, so reset parameter
 				executeCurrentDriveAsSecurityDrive = FALSE;
