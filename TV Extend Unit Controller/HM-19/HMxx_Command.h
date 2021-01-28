@@ -63,17 +63,16 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "../General/efficientStringProcessing.h"
 #include "../Atmega324 specific/Atmega324_uart_vx.h"
 #include "../General/cstDelay.h"
 
-void HMxx_enableNotifications(bool enable);
+void HMxx_enableNotifications(BOOL enable);
 
-bool _HMxx_isConnected;
-bool _HMxx_isASleep;
-bool _HMxx_macValid;
+BOOL _HMxx_isConnected;
+BOOL _HMxx_isASleep;
+BOOL _HMxx_macValid;
 
 char HMxx_mac_adress[13];
 
@@ -85,12 +84,12 @@ void HMxx_Init()
 {
 	Usart0_Init(USART0_BAUD);
 	
-	//HMxx_enableNotifications(true);
+	//HMxx_enableNotifications(TRUE);
 	//longDelay(100);
 	
-	_HMxx_isASleep = false;
-	_HMxx_isConnected = false;
-	_HMxx_macValid = false;
+	_HMxx_isASleep = FALSE;
+	_HMxx_isConnected = FALSE;
+	_HMxx_macValid = FALSE;
 	_HMxx_central_connection_status = NO_STATUS_INFO;
 	_HMxx_role = ROLE_PERIPHERAL;
 	
@@ -116,7 +115,7 @@ void HMxx_setName(char* name)// name maximum is 12 character!
 	}
 }
 
-void HMxx_enableNotifications(bool enable)
+void HMxx_enableNotifications(BOOL enable)
 {
 	if(enable)
 		Usart0_WriteString("AT+NOTI1\0");
@@ -172,9 +171,9 @@ void HMxx_setBaudrate(uint8_t baud_index)
 	}	
 }
 
-bool HMxx_getConnectionStatus(){return _HMxx_isConnected;}
-bool HMxx_getSleepStatus(){return _HMxx_isASleep;}
-bool HMxx_isMACvalid(){return _HMxx_macValid;}
+BOOL HMxx_getConnectionStatus(){return _HMxx_isConnected;}
+BOOL HMxx_getSleepStatus(){return _HMxx_isASleep;}
+BOOL HMxx_isMACvalid(){return _HMxx_macValid;}
 uint8_t HMxx_getCentralConnectingStatus(){return _HMxx_central_connection_status;}
 void HMxx_resetCentralConnectingStatus(){_HMxx_central_connection_status = NO_STATUS_INFO;}
 	
@@ -215,7 +214,7 @@ void HMxx_ConnectToAdress(char *adress)
 	Usart0_WriteString(command);
 }
 
-void HMxx_saveConnectedAdress(bool save)
+void HMxx_saveConnectedAdress(BOOL save)
 {
 	if(save)
 		Usart0_WriteString("AT+SAVE0\0");
@@ -223,9 +222,9 @@ void HMxx_saveConnectedAdress(bool save)
 		Usart0_WriteString("AT+SAVE1\0");
 }
 
-bool HMxx_onNotify(volatile char* str)
+BOOL HMxx_onNotify(volatile char* str)
 {
-	bool result = false;
+	BOOL result = FALSE;
 	
 	if(_HMxx_role == ROLE_CENTRAL)
 	{
@@ -254,7 +253,7 @@ bool HMxx_onNotify(volatile char* str)
 					_HMxx_central_connection_status = NO_STATUS_INFO;
 					break;
 				}
-				return true;
+				return TRUE;
 			}
 		}
 	}
@@ -262,29 +261,29 @@ bool HMxx_onNotify(volatile char* str)
 	if(compareStringsExactly(str, "OK+CONN\0"))
 	{
 		// connection established
-		_HMxx_isConnected = true;
-		result = true;
+		_HMxx_isConnected = TRUE;
+		result = TRUE;
 		
 		// if module was in sleep mode OK+WAKE will not be send but it will be awake
-		_HMxx_isASleep = false;
+		_HMxx_isASleep = FALSE;
 	}
 	else if(compareStringsExactly(str, "OK+LOST\0"))
 	{
 		// connection lost
-		_HMxx_isConnected = false;
-		result = true;
+		_HMxx_isConnected = FALSE;
+		result = TRUE;
 	}
 	else if(compareStringsExactly(str, "OK+SLEEP\0"))
 	{
 		// sleep mode enabled
-		_HMxx_isASleep = true;
-		result = true;
+		_HMxx_isASleep = TRUE;
+		result = TRUE;
 	}
 	else if(compareStringsExactly(str, "OK+WAKE\0"))
 	{
 		// sleep mode terminated
-		_HMxx_isASleep = false;
-		result = true;
+		_HMxx_isASleep = FALSE;
+		result = TRUE;
 	}
 	else if(stringStartsWith(str, "OK+ADDR:\0"))
 	{
@@ -294,8 +293,8 @@ bool HMxx_onNotify(volatile char* str)
 			{
 				HMxx_mac_adress[i - 8] = str[i];
 			}
-			_HMxx_macValid = true;
-			result = true;
+			_HMxx_macValid = TRUE;
+			result = TRUE;
 		}
 	}
 	

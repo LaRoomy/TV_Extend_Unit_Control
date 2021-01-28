@@ -9,9 +9,6 @@
 #ifndef GLOBALVALUECTRL_H_
 #define GLOBALVALUECTRL_H_
 
-#define FALSE	0
-#define TRUE	1
-
 // execution flags:
 #define FLAG_UPDATE_APPLIANCE_POSITION					0x01
 #define FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY		0x02
@@ -30,8 +27,6 @@
 #define EMERGENCY_STOP_REASON_DOORS_NOT_CLOSED			1
 #define EMERGENCY_STOP_REASON_USER_STOPPED				2
 
-
-typedef uint8_t BOOL;
 
 uint8_t deviceBindingStatus;
 char deviceBindingPasskey[11];

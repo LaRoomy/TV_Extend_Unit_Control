@@ -23,6 +23,7 @@
 #define		APPLIANCE_POSITION_SENSOR_ERROR	3
 
 #include "General/BitUtilitiesEx.h"
+#include "General/gDataTypes.h"
 #include "General/cstDelay.h"
 
 #include "GlobalValueCtrl.h"
@@ -86,8 +87,6 @@ void UpdateAppliancePosition(BOOL updateProperty)
 	updateCDUnitPosition();
 	updateTVUnitPosition();
 
-	// TODO: make a global position including both component conditions!!!!!!!!!!!!!!
-
 	if((cdUnit_currentPosition == OPENED_POSITION) && (tv_unit_current_position == FRONT_POSITION))
 	{
 		// tv is out!
@@ -137,7 +136,7 @@ void UpdateAppliancePosition(BOOL updateProperty)
 		}
 		else
 		{
-			currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;	
+			currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;
 		}
 	}
 	if(updateProperty)
@@ -426,26 +425,18 @@ void updateDevicePropertyToErrorStateFromErrorFlag()
 
 	if(checkErrorFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR))
 	{
-		// TODO!
-
 		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Linearantrieb - Sensorfehler!");
 	}
 	else if(checkErrorFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR))
 	{
-		// TODO!
-
 		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Kippantrieb - Sensorfehler!");
 	}
 	else if(checkErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR))
 	{
-		// TODO!
-
 		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende links - Sensorfehler!");
 	}
 	else if(checkErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR))
 	{
-		// TODO!
-
 		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende rechts - Sensorfehler!");
 	}
 	else if(checkErrorFlag(FLAG_DOORSENSOR_ERROR))

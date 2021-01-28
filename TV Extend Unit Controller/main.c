@@ -7,12 +7,11 @@
 
 #define F_CPU	9830400UL
 
-#define USART0_BAUD		38400UL// TODO: set a higher value
+#define USART0_BAUD		38400UL
 
 #include "teuc.h"
 
 
-// TODO: pin-change interrupt to make sure the sensors will not be overrun!?
 
 // TODO: eeprom!
 

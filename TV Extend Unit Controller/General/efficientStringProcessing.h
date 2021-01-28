@@ -11,37 +11,35 @@
 #ifndef EFFICIENTSTRINGPROCESSING_H_
 #define EFFICIENTSTRINGPROCESSING_H_
 
-#include <stdbool.h>
-
 uint8_t charToNum(char l);
 
 // !strings must be zero-terminated
 // !string-length are limited to 255
-bool compareStringsExactly(volatile char* str1, char* str2)
+BOOL compareStringsExactly(volatile char* str1, char* str2)
 {
 	uint8_t	counter = 0;
 	
 	while(1)
 	{
 		if(str1[counter] != str2[counter])
-		return false;
+		return FALSE;
 		
 		if((str1[counter] == 0)&&(str2[counter] == 0))
-			return true;
+			return TRUE;
 
 		if((str1[counter] == '\0')&&(str2[counter] == '\0'))
-			return true;			
+			return TRUE;			
 			
 		if(counter == 255)
-			return false;
+			return FALSE;
 		
 		counter++;
 	}
 }
 
-bool stringStartsWith(volatile char* str1, char* str2)
+BOOL stringStartsWith(volatile char* str1, char* str2)
 {
-	if((str1 != NULL) && (str2 !=  NULL))
+	if((str1 != NULL) && (str2 != NULL))
 	{
 		if((str1[0] != 0)&&(str2[0] != 0))
 		{
@@ -50,25 +48,25 @@ bool stringStartsWith(volatile char* str1, char* str2)
 			while(1)
 			{
 				if((str1[counter] == '\0')||(str2[counter] == '\0'))
-				return true;
+				return TRUE;
 		
 				if(str1[counter] != str2[counter])
-				return false;
+				return FALSE;
 		
 				if(counter == 255)
-				return false;
+				return FALSE;
 		
 				counter++;
 			}
 		}
-		return false;
+		return FALSE;
 	}
 	else
 	{
 		if((str1 == NULL)&&(str2 == NULL))
-			return true;
+			return TRUE;
 		else
-			return false;
+			return FALSE;
 	}
 }
 

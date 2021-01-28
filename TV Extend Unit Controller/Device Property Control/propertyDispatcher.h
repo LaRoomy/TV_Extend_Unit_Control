@@ -19,7 +19,7 @@
 //******************************************************************************************************************************
 // Handle types with simple (8bit) device states:
 void onHandleButtonCommand(uint8_t buttonID);// no extra data -> execution means button pressed
-void onHandleSwitchCommand(uint8_t switchID, bool newState);// extra data is 0 or 1 as char -> switch-state !
+void onHandleSwitchCommand(uint8_t switchID, BOOL newState);// extra data is 0 or 1 as char -> switch-state !
 void onHandleLevelSelectorCommand(uint8_t lSelectorID, uint8_t level);// extra data is the level value data[4..6] -> convert to uint8_t level:(0...255)
 //
 // NOTE: Properties with the type-Index 4 + 5 are not executable, so there are no functions for that!
@@ -127,7 +127,7 @@ void dispatchProperty(volatile char* data)
 				onHandleButtonCommand(propertyID);
 				break;
 			case PROPERTY_TYPE_SWITCH:
-				onHandleSwitchCommand(propertyID ,(data[4] == '0') ? false : true);
+				onHandleSwitchCommand(propertyID ,(data[4] == '0') ? FALSE : TRUE);
 				break;
 			case PROPERTY_TYPE_LEVELSELECTOR:
 				onHandleLevelSelectorCommand(propertyID, charsToU8Bit(data[4], data[5], data[6]));
@@ -206,7 +206,7 @@ void onHandleButtonCommand(uint8_t buttonID)
 	}
 }
 
-void onHandleSwitchCommand(uint8_t switchID, bool newState)
+void onHandleSwitchCommand(uint8_t switchID, BOOL newState)
 {
 	// NOTE:	Implement the switch functions here!
 	//			Handle all switches declared in the device Property

@@ -56,7 +56,7 @@ void RGBSelector_setCustomColor(uint8_t red, uint8_t green, uint8_t blue)
 	//}
 }
 
-void RGBSelector_setHardTransitionType(bool active)
+void RGBSelector_setHardTransitionType(BOOL active)
 {
 	//RGBState.hardTransiton = active ? 1 : 0;
 //

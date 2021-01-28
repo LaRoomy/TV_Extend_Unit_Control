@@ -310,101 +310,12 @@ void onPropertyStateRequest(volatile char* data)
 //****************************************************************************************************************
 		if(type == PROPERTY_TYPE_RGBSELECTOR)
 		{
-			//char carry[3] = {'\0'};			
-			//
-//#ifndef RGB_SINGLE_STATE
-			//// the state-index is the propertyState
-			//uint8_t stateIndex = getPropertyState(propertyID);
-//#endif
-			//// Property ID
-			//x8BitValueTo3CharBuffer(carry, propertyID);
-			//dataOut[3] = carry[0];
-			//dataOut[4] = carry[1];
-			//dataOut[5] = carry[2];
-			//// Command data
-//#ifdef RGB_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, RGBState.command);
-//#else		
-			//x8BitValueTo3CharBuffer(carry, RGBState[stateIndex].command);
-//#endif			
-			//dataOut[6] = carry[0];
-			//dataOut[7] = carry[1];
-			//dataOut[8] = carry[2];
-			//
-			//// Red value
-//#ifdef RGB_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, RGBState.rValue);
-//#else		
-			//x8BitValueTo3CharBuffer(carry, RGBState[stateIndex].rValue);
-//#endif			
-			//dataOut[9] = carry[0];
-			//dataOut[10] = carry[1];
-			//dataOut[11] = carry[2];
-			//
-			//// Green value
-//#ifdef RGB_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, RGBState.gValue);
-//#else
-			//x8BitValueTo3CharBuffer(carry, RGBState[stateIndex].gValue);
-//#endif			
-			//dataOut[12] = carry[0];
-			//dataOut[13] = carry[1];
-			//dataOut[14] = carry[2];
-			//
-			//// Blue value
-//#ifdef RGB_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, RGBState.bValue);
-//#else
-			//x8BitValueTo3CharBuffer(carry, RGBState[stateIndex].bValue);
-//#endif			
-			//dataOut[15] = carry[0];
-			//dataOut[16] = carry[1];
-			//dataOut[17] = carry[2];
-//
-			//// include transition-flag
-//#ifdef RGB_SINGLE_STATE
-			//dataOut[18] = (RGBState.hardTransiton == 1) ? '1' : '0';
-//#else
-			//dataOut[18] = (RGBState[stateIndex].hardTransiton == 1) ? '1' : '0';
-//#endif
-			//
-			//// delimiter
-			//dataOut[19] = '$';
-//
-			//HMxx_SendData(dataOut);
+			// not implemented
 		}
 //****************************************************************************************************************
 		else if(type == PROPERTY_TYPE_EXTLEVELSELECTOR)
 		{
-			//char carry[3];
-//
-			//// Property ID
-			//dataOut[3] = data[1];
-			//dataOut[4] = data[2];
-			//dataOut[5] = data[3];
-//
-//#ifndef XLEVELSELECT_SINGLE_STATE
-			//// retrieve state index  (if there are more than one elements of this type)
-			//uint8_t stateIndex = getPropertyState(propertyID);
-//#endif
-			//// append on/off indicator (0/1)
-//#ifdef	XLEVELSELECT_SINGLE_STATE
-			//dataOut[6] = XLevelState.on_off_state ? '1' : '0';
-//#else
-			//dataOut[6] = XLevelState[stateIndex].on_off_state ? '1' : '0';
-//#endif
-			//// append the level value (3-chars)
-//#ifdef	XLEVELSELECT_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, XLevelState.levelValue);
-//#else
-			//x8BitValueTo3CharBuffer(carry, XLevelState[stateIndex].levelValue);
-//#endif
-			//dataOut[7] = carry[0];
-			//dataOut[8] = carry[1];
-			//dataOut[9] = carry[2];
-			//dataOut[10] = '$';			// delimiter
-//
-			//HMxx_SendData(dataOut);
+			// not implemented
 		}
 //****************************************************************************************************************
 		else if(type == PROPERTY_TYPE_SIMPLETIMESELECTOR)
@@ -454,59 +365,7 @@ void onPropertyStateRequest(volatile char* data)
 		//****************************************************************************************************************
 		else if(type == PROPERTY_TYPE_TIMEFRAMESELECTOR)
 		{
-			//char carry[3];
-//
-			//// Property ID
-			//dataOut[3] = data[1];
-			//dataOut[4] = data[2];
-			//dataOut[5] = data[3];
-//
-//#ifndef TIMEFRAMESTRUCT_SINGLE_STATE
-			//// retrieve state index (if there are more than one elements of this type)
-			//uint8_t stateIndex = getPropertyState(propertyID);
-//#endif
-//
-			//// placeholder (reserved for some extra functions)
-			//dataOut[6] = '0';
-//
-//#ifdef TIMEFRAMESTRUCT_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState.time_on.hour);
-//#else
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState[stateIndex].time_on.hour);
-//#endif
-			//dataOut[7] = carry[1];
-			//dataOut[8] = carry[2];
-//
-//#ifdef TIMEFRAMESTRUCT_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState.time_on.minute);
-//#else
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState[stateIndex].time_on.minute);
-//#endif
-			//dataOut[9] = carry[1];
-			//dataOut[10] = carry[2];
-//
-//#ifdef TIMEFRAMESTRUCT_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState.time_off.hour);
-//#else
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState[stateIndex].time_off.hour);
-//#endif
-			//dataOut[11] = carry[1];
-			//dataOut[12] = carry[2];
-//
-//#ifdef TIMEFRAMESTRUCT_SINGLE_STATE
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState.time_off.minute);
-//#else
-			//x8BitValueTo3CharBuffer(carry, TimeFrameState[stateIndex].time_off.minute);
-//#endif
-			//dataOut[13] = carry[1];
-			//dataOut[14] = carry[2];
-//
-			//// set activity status
-			//dataOut[15] = '1';			// temporary placeholder! (enabled state)
-//
-			//dataOut[16] = '$';			// delimiter
-//
-			//HMxx_SendData(dataOut);
+			// not implemented
 		}
 		//****************************************************************************************************************
 		else if(type == PROPERTY_TYPE_NAVIGATOR)
@@ -726,7 +585,7 @@ void onDetailedPropGroupInfoRequest(volatile char* data)
 
 void notifyPropertyChanged(uint8_t propertyID, uint8_t flags)
 {
-	if(HMxx_getConnectionStatus() == true)
+	if(HMxx_getConnectionStatus())
 	{
 		char carry[3];
 		char notification[19];
@@ -760,7 +619,7 @@ void notifyPropertyChanged(uint8_t propertyID, uint8_t flags)
 
 void notifyPropertyGroupChanged(uint8_t groupID, uint8_t flags)
 {
-	if(HMxx_getConnectionStatus() == true)
+	if(HMxx_getConnectionStatus())
 	{
 		char carry[3];
 		char notification[19];
