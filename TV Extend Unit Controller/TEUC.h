@@ -30,7 +30,7 @@
 
 void updateDevicePropertyToSpecificCondition(uint8_t direction);
 void updateDevicePropertyFromAppliancePosition();
-void updateDevicePropertyToErrorStateFromErrorFlag();
+void updateDeviceHeaderToErrorStateFromErrorFlag();
 
 #include "TEUC PPDef.h"
 
@@ -51,9 +51,10 @@ void EmergencyStop(uint8_t reason);
 #include "Atmega324 specific/atmega324_pcint.h"
 
 
-// check if the doors are closed
 BOOL checkDoorSensor()
 {
+	// check if the doors are closed
+
 	// PORTC0 == 1 -> doors are closed
 	// PORTC0 == 0 -> one or more doors are open
 	if(!(DOOR_SENSOR_PIN & (1<<DOOR_SENSOR)))
@@ -79,7 +80,15 @@ BOOL checkDoorSensor()
 BOOL checkDrivePreconditions()
 {
 	// check all conditions which must be fulfilled to start the drive
-	return checkDoorSensor();
+	// ---
+	// if there an false conditions, report to app if connected	
+
+	if(!checkDoorSensor())
+	{
+		setErrorFlag(FLAG_DOORSENSOR_ERROR);
+		return FALSE;
+	}
+	return TRUE;
 }
 
 void UpdateAppliancePosition(BOOL updateProperty)
@@ -141,8 +150,6 @@ void UpdateAppliancePosition(BOOL updateProperty)
 	}
 	if(updateProperty)
 	{
-		// TODO: this will also be invoked in interrupt vector, so do that in main with the timer!?
-		
 		updateDevicePropertyFromAppliancePosition();
 	}
 }
@@ -153,10 +160,15 @@ void EnableApplianceDriver(BOOL enable)
 	enable_cdUnit_Driver(enable);
 }
 
+BOOL isDriveInProgress()
+{
+	BOOL isCDDriving = isCD_Unit_Drive_In_Progress();
+	BOOL isTVDriving = isTV_Unit_Drive_In_Progress();
+	return (isCDDriving || isTVDriving);
+}
+
 void ControlDriveProcess()
 {
-	// only invoke the appropriate function for the specific process or none if no drive is active?!
-
 	TV_Unit_Control_DriveProcess();
 	CD_Unit_Control_Drive_Process();
 }
@@ -186,7 +198,7 @@ void EmergencyStop(uint8_t reason)
 
 			// TODO: save condition to proceed on request
 
-			updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);	
+			updateDevicePropertyToSpecificCondition(UDP_DRIVE_INTERRUPT);
 		}
 	}
 }
@@ -214,30 +226,20 @@ BOOL StartApplianceDrive()
 
 		if(isCDDriving || isTVDriving)
 		{
-			
-			
-			// this could not happen, or what???? Drivemode can not be emergency stop!?
-			
-			
-			// drive is in progress or in interrupted state -> check
-			if((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP))
-			{
-				// the last drive was interrupted -> make security drive or proceed the last drive ???
-				
-				// TODO!!!!
-			}
-			else
-			{
-				// the drive must be in progress -> stop or return indicator to stop!!!
-
-
-				// TODO !!!!!!!!!!!!!!!!
-
-				return FALSE;
-			}
+			return FALSE;
 		}
 		else
 		{
+			// normalize device-header
+			if(deviceHeaderChanged)
+			{
+				deviceHeaderChanged = FALSE;
+				setDeviceInfoHeader(IMAGE_ID_CHECKMARK_BLUE, "Bereit\0");
+			}
+
+			// enable the driver
+			EnableApplianceDriver(TRUE);
+
 			// get position and drive based on that condition
 			UpdateAppliancePosition(FALSE);
 
@@ -259,6 +261,7 @@ BOOL StartApplianceDrive()
 			{
 				// fatal error -> do not drive!
 				updateDevicePropertyToSpecificCondition(UDP_DRIVING_ERROR);
+				EnableApplianceDriver(FALSE);
 			}
 			else
 			{
@@ -266,12 +269,6 @@ BOOL StartApplianceDrive()
 				StartSecurityDrive();
 			}
 		}
-	}
-	else
-	{
-		// preconditions not fulfilled -> report to app
-
-		// TODO: !!!!!!!!
 	}
 	return TRUE;
 }
@@ -419,33 +416,38 @@ void updateDevicePropertyToSpecificCondition(uint8_t direction)
 	}
 }
 
-void updateDevicePropertyToErrorStateFromErrorFlag()
+void updateDeviceHeaderToErrorStateFromErrorFlag()
 {
 	updateDevicePropertyToSpecificCondition(UDP_DRIVING_ERROR);
 
-	if(checkErrorFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR))
-	{
-		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Linearantrieb - Sensorfehler!");
-	}
-	else if(checkErrorFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR))
-	{
-		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Kippantrieb - Sensorfehler!");
-	}
-	else if(checkErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR))
-	{
-		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende links - Sensorfehler!");
-	}
-	else if(checkErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR))
-	{
-		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende rechts - Sensorfehler!");
-	}
-	else if(checkErrorFlag(FLAG_DOORSENSOR_ERROR))
-	{
-		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "T]rsensor offen!");
-	}
-	else
-	{
-		setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Unbekannter Fehler.");
+	if(HMxx_getConnectionStatus())
+	{	
+		deviceHeaderChanged = TRUE;
+
+		if(checkErrorFlag(FLAG_TVDRIVE_LIN_SENSOR_ERROR))
+		{
+			setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Linearantrieb - Sensorfehler!");
+		}
+		else if(checkErrorFlag(FLAG_TVDRIVE_TILT_SENSOR_ERROR))
+		{
+			setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Kippantrieb - Sensorfehler!");
+		}
+		else if(checkErrorFlag(FLAG_CDDRIVE_LEFT_SENSOR_ERROR))
+		{
+			setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende links - Sensorfehler!");
+		}
+		else if(checkErrorFlag(FLAG_CDDRIVE_RIGHT_SENSOR_ERROR))
+		{
+			setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Blende rechts - Sensorfehler!");
+		}
+		else if(checkErrorFlag(FLAG_DOORSENSOR_ERROR))
+		{
+			setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "T]rsensor offen!");
+		}
+		else
+		{
+			setDeviceInfoHeader(IMAGE_ID_WARNING_RED, "Unbekannter Fehler.");
+		}
 	}
 }
 
@@ -473,12 +475,14 @@ void CoverDriveReachedClosedPosition()
 {
 	// the drive-process is finished -> schedule the update of the parameter for main
 	setExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
+	setExecutionFlag(FLAG_DISABLE_DRIVER);
 }
 
 void TVDriveReachedFrontPosition()
 {
 	// the drive-process is finished -> schedule the update of the parameter for main
 	setExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
+	setExecutionFlag(FLAG_DISABLE_DRIVER);
 }
 
 void updateMotorCurrentValues()

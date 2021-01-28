@@ -28,10 +28,9 @@ ISR(TIMER0_OVF_vect)
 	{
 		timer_counter++;
 
-		if(timer_counter == 14)
+		if(timer_counter == 8)
 		{
 			// 200 millisec interval (8)
-			// TODO!!!!!!!!!!!!!!!!!!!!!!!!!
 			TwoHMilliSec_event = ACTIVATE;
 		}		
 	}
@@ -61,8 +60,8 @@ int main(void)
 	InitGlobalValues();
 	longDelay(20);
 
-	// enable both, the cover- and tv-drive
-	EnableApplianceDriver(TRUE);
+	// disable both, the cover- and tv-drive
+	EnableApplianceDriver(FALSE);
 
 	// We assume the hm-module is already configured
 	// Parameter:
@@ -109,10 +108,6 @@ int main(void)
 			}
 		}
 /**************************************************************************************************************************/
-		// control drive
-		//ControlDriveProcess();
-
-/**************************************************************************************************************************/
 		// check board buttons
 		CheckBoardButtons();
 
@@ -138,21 +133,11 @@ int main(void)
 			OneSecond_event = DISABLE;
 			switch_preventer = FALSE;
 
-			// raise component events
-			//TV_Unit_HandleOneSecondEvent();
-
-			// temp: !!!*******************************************
-			//pc1_enable(2);
-			
-			//if(activeMultiComplexPropertyID != 0)
-			//{			
-				//sendBarGraphInfo(updatecounter);
-			//
-				//updatecounter++;
-				//if(updatecounter == 8)
-					//updatecounter = 0;
-			//}
-			// **********************!!!
+			// check if drive is in progress and if not update the position
+			if(!isDriveInProgress())
+			{
+				UpdateAppliancePosition(TRUE);
+			}
 		}
 		if(TwoHMilliSec_event)
 		{
@@ -190,14 +175,10 @@ int main(void)
 		}
 		
 /**************************************************************************************************************************/
-		// Check flags
-
+		// Check flags:
+		// ___________________________________
 		if(executionFlags != 0)
 		{
-			
-			// TODO: important: do not execute opposed flags!!!
-			
-			
 			if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY))
 			{
 				// an asynchronous position and property update is requested
@@ -216,22 +197,29 @@ int main(void)
 			{
 				// the cover-drive is opened now -> start moving the tv-unit
 				TV_Unit_Drive_Move_Out();
-				clearExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT);
+				
+				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 			}
 			if(checkExecutionFlag(FLAG_COVERDRIVE_START_CLOSE))
 			{
 				// the tv-unit is moved in -> start closing the cover-drive
 				CD_Unit_Drive_Close();
-				clearExecutionFlag(FLAG_COVERDRIVE_START_CLOSE);
+				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 			}
 			if(checkExecutionFlag(FLAG_TVDRIVE_START_SECUREPOSITION))
 			{
 				// the cover-drive position is secured -> now start securing the tv-unit position
 				TV_Unit_StartSecurityDrive();
-				clearExecutionFlag(FLAG_TVDRIVE_START_SECUREPOSITION);
+				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 
 				// from now on this should be a normal drive-in execution, so reset parameter
 				executeCurrentDriveAsSecurityDrive = FALSE;
+			}
+			if(checkExecutionFlag(FLAG_DISABLE_DRIVER))
+			{
+				// disable the drivers to save energy
+				EnableApplianceDriver(FALSE);
+				clearExecutionFlag(FLAG_DISABLE_DRIVER);
 			}
 			//////////////////////////////////////////////////////////////////////
 
@@ -243,7 +231,7 @@ int main(void)
 			sbi(PORTA, PORTA5);
 			///////////////////
 
-			updateDevicePropertyToErrorStateFromErrorFlag();
+			updateDeviceHeaderToErrorStateFromErrorFlag();
 			errorFlags = 0; // erase all flags
 		}
 		

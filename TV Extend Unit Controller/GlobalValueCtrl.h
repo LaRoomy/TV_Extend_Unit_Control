@@ -15,6 +15,7 @@
 #define FLAG_COVERDRIVE_START_CLOSE						0x04
 #define FLAG_TVDRIVE_START_MOVE_OUT						0x08
 #define FLAG_TVDRIVE_START_SECUREPOSITION				0x10
+#define FLAG_DISABLE_DRIVER								0x20
 
 // error flags:
 #define FLAG_DOORSENSOR_ERROR							0x01
@@ -43,6 +44,7 @@ uint16_t coverDriveRightCurrentValue;
 uint8_t	currentAppliancePosition;
 
 BOOL executeCurrentDriveAsSecurityDrive;
+BOOL deviceHeaderChanged;
 
 uint8_t currentMonitorUpdateCounter;
 
@@ -60,6 +62,7 @@ void InitGlobalValues()
 	errorFlags = 0;
 
 	executeCurrentDriveAsSecurityDrive = FALSE;
+	deviceHeaderChanged = FALSE;
 
 	currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;
 
@@ -101,6 +104,11 @@ void clearErrorFlag(uint8_t flag)
 uint8_t checkErrorFlag(uint8_t flag)
 {
 	return errorFlags & flag;
+}
+
+void eraseExecutionMovementFlags()
+{
+	executionFlags &= (~0x1C);
 }
 
 
