@@ -28,6 +28,15 @@
 #define EMERGENCY_STOP_REASON_DOORS_NOT_CLOSED			1
 #define EMERGENCY_STOP_REASON_USER_STOPPED				2
 
+// maintenance drive types
+#define MAINTENANCEDRIVETYPE_CD_RIGHT_OPEN				0x01
+#define MAINTENANCEDRIVETYPE_CD_RIGHT_CLOSE				0x02
+#define MAINTENANCEDRIVETYPE_CD_LEFT_OPEN				0x04
+#define MAINTENANCEDRIVETYPE_CD_LEFT_CLOSE				0x08
+#define MAINTENANCEDRIVETYPE_TV_TILT_OUT				0x10
+#define MAINTENANCEDRIVETYPE_TV_TILT_IN					0x20
+#define MAINTENANCEDRIVETYPE_TV_LINEAR_OUT				0x40
+#define MAINTENANCEDRIVETYPE_TV_LINEAR_IN				0x80
 
 uint8_t deviceBindingStatus;
 char deviceBindingPasskey[11];
@@ -51,6 +60,8 @@ uint8_t currentMonitorUpdateCounter;
 volatile uint8_t executionFlags;
 volatile uint8_t errorFlags;
 
+volatile BOOL maintenanceDriveActive;
+
 
 void InitGlobalValues()
 {
@@ -62,6 +73,7 @@ void InitGlobalValues()
 	errorFlags = 0;
 
 	executeCurrentDriveAsSecurityDrive = FALSE;
+	maintenanceDriveActive = FALSE;
 	deviceHeaderChanged = FALSE;
 
 	currentAppliancePosition = APPLIANCE_POSITON_UNDEFINED;

@@ -228,177 +228,17 @@ void onHandleSwitchCommand(uint8_t switchID, BOOL newState)
 
 void onHandleLevelSelectorCommand(uint8_t lSelectorID, uint8_t level)
 {
-	// NOTE:	Implement the level selector functions here!
-	//			Handle all level selectors declared in the device Property
-	//setPropertyState(lSelectorID, level);
-	//
-//
-	//if(lSelectorID == EXAMPLE_LEVELSELECTOR_1)
-	//{
-		//if(level == 0)
-		//{
-			////StopPWM(PWM_CHANNEL_A);
-		//}
-		//else
-		//{
-			////StartPWM(PWM_CHANNEL_A);
-			////SetPWMValue(PWM_CHANNEL_A, level);
-		//}
-	//}
-	// else if( .... -> handle all level selectors...
-
-
-	//else if(lSelectorID == EXAMPLE_EXLEVEL_SELECTOR_3)
-	//{
-		//if(level == 0)
-		//{
-			//StopPWM(PWM_CHANNEL_B);
-		//}
-		//else
-		//{
-			//StartPWM(PWM_CHANNEL_B);
-			//SetPWMValue(PWM_CHANNEL_B, level);
-		//}
-	//}
-
-	//eeSavePropertyState(lSelectorID);
+	// not implemented
 }
 
 void onRGBCommand(uint8_t rgbID, uint8_t command, uint8_t rVal, uint8_t gVal, uint8_t bVal)
 {
-	//// apply the new rgb-state
-	//uint8_t stateIndex = getPropertyState(rgbID);//complexStateIndexFromPropertyID(rgbID);
-//
-	//if(stateIndex < RGBSTATESTRUCT_SIZE)
-	//{
-		//// distinct between a normal color-change transmission or a transition-type-change transmission and a program-change transmission
-		//// in a transition command, the color values must be ignored!
-		//if((command == 200)||(command == 201))
-		//{
-//#ifdef RGB_SINGLE_STATE
-			//RGBState.hardTransiton = (command == 200) ? 1 : 0;
-//#else
-			//RGBState.hardTransiton[stateIndex] = (command == 200) ? 1 : 0;
-//#endif
-		//}
-		//else
-		//{	
-			//// if this is a program-init or change command -> do not change the color-values
-			//if((command >= CC_SLOW_OPERATION)&&(command < EO_OPERATION))
-			//{
-//#ifdef RGB_SINGLE_STATE
-				//RGBState.command = command;
-//#else
-				//RGBState.command[stateIndex] = command;
-//#endif
-			//}
-			//else
-			//{		
-//#ifdef RGB_SINGLE_STATE
-				//RGBState.command = command;
-				//RGBState.rValue = rVal;
-				//RGBState.gValue = gVal;
-				//RGBState.bValue = bVal;
-//#else
-				//RGBState.command[stateIndex] = command;
-				//RGBState.rValue[stateIndex] = rVal;
-				//RGBState.gValue[stateIndex] = gVal;
-				//RGBState.bValue[stateIndex] = bVal;
-//#endif
-			//}
-		//}
-//
-		//eeSavePropertyState(rgbID);// maybe do this at the end of the function
-//
-		//// assign the right functionality to the appropriate ID:
-		//
-		//if(rgbID == EXAMPLE_RGB_SELECTOR_2)
-		//{
-			//if(command < 9)// select specific color or custom value
-			//{
-				//if(command < CUSTOM_COLOR)
-				//{
-					//selectColor(command);
-				//}
-				//else
-				//{
-					//setCustomColorValues(rVal, gVal, bVal);
-				//}
-			//}
-			//else// select a transition program (or extended command)
-			//{				
-				//// must be the selection of a program
-				//if((command >= 10) && (command <= 15))
-				//{
-					//selectProgram(command);
-				//}
-				//else
-				//{
-					//// extended commands:
-//
-					//switch(command)
-					//{
-						//case HARD_TRANSITION: // set hard transition in rgb-interface
-							//setTransitionType(L_HARD_TRANSITION);
-							//break;
-						//case SOFT_TRANSITION: // set soft transition in rgb-interface
-							//setTransitionType(L_SOFT_TRANSITION);
-							//break;
-						//default:
-							//break;
-					//}
-				//}
-			//}
-		//}
-	//}
+	// not implemented
 }
 
 void onExLevelSelectCommand(uint8_t exLevelSelectorID, uint8_t onoffState, uint8_t levelValue)
-{	
-	//uint8_t stateIndex = getPropertyState(exLevelSelectorID);
-//
-	//// make sure the index is in range!
-	//if(stateIndex < XLEVELSELECTSTRUCT_SIZE)
-	//{
-		//// save state:
-//#ifdef XLEVELSELECT_SINGLE_STATE
-		//XLevelState.on_off_state = onoffState;
-		//XLevelState.levelValue = levelValue;
-//#else
-		//XLevelState[stateIndex].on_off_state = onoffState;
-		//XLevelState[stateIndex].levelValue = levelValue;
-//#endif
-		//eeSavePropertyState(exLevelSelectorID);// maybe do this at the end of the function
-		//
-		//// assign the right functionality to the appropriate ID:
-//
-		//if(exLevelSelectorID == EXAMPLE_EXLEVEL_SELECTOR_3)
-		//{
-			//
-			//
-//
-			//// != temp:
-//
-			//if(levelValue == 0)
-				//StopPWM(PWM_CHANNEL_B);
-			//else
-			//{			
-				//if(onoffState)
-				//{
-					//StartPWM(PWM_CHANNEL_B);
-					//SetPWMValue(PWM_CHANNEL_B, levelValue);
-				//}
-				//else
-				//{					
-					//StopPWM(PWM_CHANNEL_B);
-				//}
-			//}
-//
-			//// end temp!!
-//
-//
-		//}
-	//}
+{
+	// not implemented
 }
 
 void onTimeSelectCommand(uint8_t simpleTimeSelectorID, uint8_t setterIndex, uint8_t hour, uint8_t minute, uint8_t second)
@@ -436,68 +276,19 @@ void onTimeSelectCommand(uint8_t simpleTimeSelectorID, uint8_t setterIndex, uint
 
 void onTimeFrameSelectCommand(uint8_t timeFrameSelectorID, char setterIndex, uint8_t hour, uint8_t minute)
 {
-	// schedule the time-frame activation
-	//setGlobalControlFlag(SCHEDULE_TIMEFRAME_ACTIVATION);
-//
-	//uint8_t stateIndex = getPropertyState(timeFrameSelectorID);
-//
-	//// make sure the index is in a valid range
-	//if(stateIndex < TIMEFRAMESTRUCTSIZE)
-	//{
-		//if(setterIndex == '1')// on-time
-		//{
-//#ifdef TIMEFRAMESTRUCT_SINGLE_STATE
-			//TimeFrameState.time_on.hour = hour;
-			//TimeFrameState.time_on.minute = minute;
-//#else
-			//TimeFrameState[stateIndex].time_on.hour = hour;
-			//TimeFrameState[stateIndex].time_on.minute = minute;
-//#endif			
-		//}
-		//else if(setterIndex == '2')// off-time
-		//{
-//#ifdef TIMEFRAMESTRUCT_SINGLE_STATE
-			//TimeFrameState.time_off.hour = hour;
-			//TimeFrameState.time_off.minute = minute;
-//#else
-			//TimeFrameState[stateIndex].time_off.hour = hour;
-			//TimeFrameState[stateIndex].time_off.minute = minute;
-//#endif
-			//eeSavePropertyState(timeFrameSelectorID);
-//
-			//// assign the right functionality to the appropriate ID:
-//
-			//if(timeFrameSelectorID == EXAMPLE_TIMEFRAMESELECTOR)
-			//{
-				//// ...
-			//}
-		//}
-		//else
-		//{
-			//HMxx_SendData("TF:Setter:Invalid$\0");
-		//}
-	//}
+	// not implemented
 }
 
 void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char touchType)
 {
 	// Direction-Char:
-	// 1 = up; 2 = right; 3 = down; 4 = left; 5 = ok (middle-button)
-
-	// only execute if auto-drive is not in progress!
-	//if(tv_unit_current_drive_mode != DRIVEMODE_NONE)
-		//return;
+	// 1 = up; 2 = right; 3 = down; 4 = left; 5 = ok (middle-button)		
 		
-		
-	// TODO: make sure that the automatic drive is not in progress!!!!!!!!!!!!!!!!!!!!!!!
-	
+	// make sure that the automatic drive is not in progress!	
 	uint8_t isTVMoving = isTV_Unit_Drive_In_Progress();
 	uint8_t isCoverMoving = isCD_Unit_Drive_In_Progress();
 	
 	uint8_t isSecurityHold = ((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP)) ? 1 : 0;
-
-
-	// TODO: TEST IF THIS WORKS!!!!!!!!!!!!!!
 
 	if((!isTVMoving && !isCoverMoving) || isSecurityHold)
 	{
@@ -508,46 +299,55 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 				case '1':// up
 					if(touchType == '1')
 					{
-						move_tilt_drive(MOVE_IN);
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_TILT_IN;
+						move_tilt_drive(MOVE_IN);						
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						move_tilt_drive(STOP);
 					}
 					break;
 				case '2':// right
 					if(touchType == '1')
 					{
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_LINEAR_OUT;
 						move_linear_drive(MOVE_OUT);
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						move_linear_drive(STOP);
 					}
 					break;
 				case '3':// down
 					if(touchType == '1')
 					{
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_TILT_OUT;
 						move_tilt_drive(MOVE_OUT);
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						move_tilt_drive(STOP);
 					}
 					break;
 				case '4':// left
 					if(touchType == '1')
 					{
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_LINEAR_IN;
 						move_linear_drive(MOVE_IN);
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						move_linear_drive(STOP);
 					}
 					break;
 				case '5':// middle button (Ok)
 					move_linear_drive(STOP);
 					move_tilt_drive(STOP);
+					maintenanceDriveActive = FALSE;
 					break;
 				default:
 					break; 
@@ -560,20 +360,24 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 				case '2':// right
 					if(touchType == '1')
 					{
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_LEFT_CLOSE;
 						moveLeftDrive(MOVE_CLOSE);
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						moveLeftDrive(STOP);
 					}
 					break;
 				case '4':// left
 					if(touchType == '1')
 					{
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_LEFT_OPEN;
 						moveLeftDrive(MOVE_OPEN);
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						moveLeftDrive(STOP);
 					}
 					break;
@@ -588,20 +392,24 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 				case '2':// right
 					if(touchType == '1')
 					{
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_RIGHT_OPEN;
 						moveRightDrive(MOVE_OPEN);
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						moveRightDrive(STOP);
 					}
 					break;
 				case '4':// left
 					if(touchType == '1')
 					{
+						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_RIGHT_CLOSE;
 						moveRightDrive(MOVE_CLOSE);
 					}
 					else
 					{
+						maintenanceDriveActive = FALSE;
 						moveRightDrive(STOP);
 					}
 					break;

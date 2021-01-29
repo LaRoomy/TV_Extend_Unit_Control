@@ -32,7 +32,12 @@ ISR(TIMER0_OVF_vect)
 		{
 			// 200 millisec interval (8)
 			TwoHMilliSec_event = ACTIVATE;
-		}		
+		}
+		if(timer_counter == 19)
+		{
+			// 1/2 sec event
+			HalfSecond_event = ACTIVATE;
+		}
 	}
 }
 
@@ -121,9 +126,11 @@ int main(void)
 		}
 		// 2. motor current
 
+		// TODO !
+
 		updateMotorCurrentValues();
 
-		// TODO!
+		// TODO	!
 
 /**************************************************************************************************************************/
 		// check timer events
@@ -132,12 +139,18 @@ int main(void)
 			// reset global control parameter
 			OneSecond_event = DISABLE;
 			switch_preventer = FALSE;
-
-			// check if drive is in progress and if not update the position
-			//if(!isDriveInProgress())
-			//{
-				//UpdateAppliancePosition(TRUE);
-			//}
+		}
+		if(HalfSecond_event)
+		{
+			if(isDriveInProgress())
+			{
+				tbi(PORTA, PORTA5);
+			}
+			else
+			{
+				cbi(PORTA, PORTA5);
+			}
+			HalfSecond_event = DISABLE;
 		}
 		if(TwoHMilliSec_event)
 		{
@@ -149,8 +162,7 @@ int main(void)
 				}
 			}
 			TwoHMilliSec_event = DISABLE;
-		}
-		
+		}		
 		
 /**************************************************************************************************************************/
 		// check bluetooth transmission
@@ -181,40 +193,45 @@ int main(void)
 		{
 			if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY))
 			{
-				// an asynchronous position and property update is requested
-				UpdateAppliancePosition(TRUE);
+				// first clear the flags, because processing this action may set other flags, so nothing will be overwritten
 				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
 				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION);
+
+				// an asynchronous position and property update is requested
+				UpdateAppliancePosition(TRUE);
 			}
 			else if(checkExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION))
 			{
+				// first clear the flag, because processing this action may set other flags, so nothing will be overwritten
+				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION);
+
 				// an asynchronous position update is requested
 				UpdateAppliancePosition(FALSE);
-				clearExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION);
 			}
 			//////////////////////////////////////////////////////////////////////
 			if(checkExecutionFlag(FLAG_TVDRIVE_START_MOVE_OUT))
 			{
+				// first clear the flags, because processing this action may set other flags, so nothing will be overwritten
+				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
+
 				// the cover-drive is opened now -> start moving the tv-unit
 				TV_Unit_Drive_Move_Out();
-				
-				//eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 			}
 			if(checkExecutionFlag(FLAG_COVERDRIVE_START_CLOSE))
 			{
+				// first clear the flags, because processing this action may set other flags, so nothing will be overwritten
+				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
+
 				// the tv-unit is moved in -> start closing the cover-drive
 				CD_Unit_Drive_Close();
-				
-				
-				// there is a problem with this function: !
-				
-				//eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 			}
 			if(checkExecutionFlag(FLAG_TVDRIVE_START_SECUREPOSITION))
 			{
+				// first clear the flags, because processing this action may set other flags, so nothing will be overwritten
+				eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
+
 				// the cover-drive position is secured -> now start securing the tv-unit position
 				TV_Unit_StartSecurityDrive();
-				//eraseExecutionMovementFlags();// erase all flags related to a movement (it should not happen, but it makes sure there will be no conflict with the movement actions)
 
 				// from now on this should be a normal drive-in execution, so reset parameter
 				executeCurrentDriveAsSecurityDrive = FALSE;
@@ -232,26 +249,15 @@ int main(void)
 		if(errorFlags != 0)
 		{
 			// temp:
-			sbi(PORTA, PORTA5);
+			//sbi(PORTA, PORTA5);
 			///////////////////
 
 			updateDeviceHeaderToErrorStateFromErrorFlag();
 			errorFlags = 0; // erase all flags
 		}
 		
-		
+		// end of main loop...
 /**************************************************************************************************************************/
-		// temporary:
-		
-		//if(HMxx_getConnectionStatus())
-		//{
-			//sbi(PORTA, PORTA5);
-		//}
-		//else
-		//{
-			//cbi(PORTA, PORTA5);
-		//}
-
     }
 }
 

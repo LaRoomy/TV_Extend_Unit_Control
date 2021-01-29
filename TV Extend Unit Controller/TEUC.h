@@ -50,6 +50,8 @@ void EmergencyStop(uint8_t reason);
 #include "Atmega324 specific/atmega324_adc.h"
 #include "Atmega324 specific/atmega324_pcint.h"
 
+void check_maintenance_drive_stop_condition();
+
 
 BOOL checkDoorSensor()
 {
@@ -169,8 +171,15 @@ BOOL isDriveInProgress()
 
 void ControlDriveProcess()
 {
-	TV_Unit_Control_DriveProcess();
-	CD_Unit_Control_Drive_Process();
+	if(maintenanceDriveActive)
+	{
+		void check_maintenance_drive_stop_condition();
+	}
+	else
+	{
+		TV_Unit_Control_DriveProcess();
+		CD_Unit_Control_Drive_Process();
+	}
 }
 
 void EmergencyStop(uint8_t reason)
@@ -575,9 +584,85 @@ void CheckBoardButtons()
 			
 			longDelay(200);
 		}
-	}
-	
+	}	
 }
+
+void check_maintenance_drive_stop_condition()
+{
+	if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_CD_LEFT_CLOSE)
+	{
+		uint8_t leftCoverPos = checkLeftCoverPosition();
+		if(leftCoverPos == CLOSED_POSTION)
+		{
+			moveLeftDrive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_CD_LEFT_OPEN)
+	{
+		uint8_t leftCoverPos = checkLeftCoverPosition();
+		if(leftCoverPos == OPENED_POSITION)
+		{
+			moveLeftDrive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_CD_RIGHT_CLOSE)
+	{
+		uint8_t rightCoverPos = checkRightCoverPosition();
+		if(rightCoverPos == CLOSED_POSTION)
+		{
+			moveRightDrive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_CD_RIGHT_OPEN)
+	{
+		uint8_t rightCoverPos = checkRightCoverPosition();
+		if(rightCoverPos == OPENED_POSITION)
+		{
+			moveRightDrive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_LINEAR_IN)
+	{
+		uint8_t linearPos = linear_drive_check_position();
+		if(linearPos == BACK_POSITION)
+		{
+			move_linear_drive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_LINEAR_OUT)
+	{
+		uint8_t linearPos = linear_drive_check_position();
+		if(linearPos == FRONT_POSITION)
+		{
+			move_linear_drive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_TILT_IN)
+	{
+		uint8_t tiltPos = tilt_drive_check_position();
+		if(tiltPos == BACK_POSITION)
+		{
+			move_tilt_drive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_TILT_OUT)
+	{
+		uint8_t tiltPos = tilt_drive_check_position();
+		if(tiltPos == FRONT_POSITION)
+		{
+			move_tilt_drive(STOP);
+			maintenanceDriveActive = FALSE;
+		}
+	}
+}
+
 
 //void sendBarGraphInfo(uint8_t counter)
 //{
