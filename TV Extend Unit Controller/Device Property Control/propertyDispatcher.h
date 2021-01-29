@@ -282,13 +282,13 @@ void onTimeFrameSelectCommand(uint8_t timeFrameSelectorID, char setterIndex, uin
 void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char touchType)
 {
 	// Direction-Char:
-	// 1 = up; 2 = right; 3 = down; 4 = left; 5 = ok (middle-button)		
-		
+	// 1 = up; 2 = right; 3 = down; 4 = left; 5 = ok (middle-button)	
+			
 	// make sure that the automatic drive is not in progress!	
-	uint8_t isTVMoving = isTV_Unit_Drive_In_Progress();
-	uint8_t isCoverMoving = isCD_Unit_Drive_In_Progress();
+	BOOL isTVMoving = isTV_Unit_Drive_In_Progress();
+	BOOL isCoverMoving = isCD_Unit_Drive_In_Progress();
 	
-	uint8_t isSecurityHold = ((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP)) ? 1 : 0;
+	BOOL isSecurityHold = ((tv_unit_current_drive_mode == DRIVEMODE_EMERGENCY_STOP) || (cdUnit_currentDriveMode == DRIVEMODE_EMERGENCY_STOP)) ? TRUE : FALSE;
 
 	if((!isTVMoving && !isCoverMoving) || isSecurityHold)
 	{
@@ -299,6 +299,7 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 				case '1':// up
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_TILT_IN;
 						move_tilt_drive(MOVE_IN);						
 					}
@@ -306,11 +307,13 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						move_tilt_drive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				case '2':// right
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_LINEAR_OUT;
 						move_linear_drive(MOVE_OUT);
 					}
@@ -318,11 +321,13 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						move_linear_drive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				case '3':// down
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_TILT_OUT;
 						move_tilt_drive(MOVE_OUT);
 					}
@@ -330,11 +335,13 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						move_tilt_drive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				case '4':// left
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_TV_LINEAR_IN;
 						move_linear_drive(MOVE_IN);
 					}
@@ -342,6 +349,7 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						move_linear_drive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				case '5':// middle button (Ok)
@@ -360,6 +368,7 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 				case '2':// right
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_LEFT_CLOSE;
 						moveLeftDrive(MOVE_CLOSE);
 					}
@@ -367,11 +376,13 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						moveLeftDrive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				case '4':// left
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_LEFT_OPEN;
 						moveLeftDrive(MOVE_OPEN);
 					}
@@ -379,6 +390,7 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						moveLeftDrive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				default:
@@ -392,6 +404,7 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 				case '2':// right
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_RIGHT_OPEN;
 						moveRightDrive(MOVE_OPEN);
 					}
@@ -399,11 +412,13 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						moveRightDrive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				case '4':// left
 					if(touchType == '1')
 					{
+						EnableApplianceDriver(TRUE);
 						maintenanceDriveActive = MAINTENANCEDRIVETYPE_CD_RIGHT_CLOSE;
 						moveRightDrive(MOVE_CLOSE);
 					}
@@ -411,6 +426,7 @@ void onSimpleNavigatorCommand(uint8_t simpleNavigatorID, char direction, char to
 					{
 						maintenanceDriveActive = FALSE;
 						moveRightDrive(STOP);
+						setExecutionFlag(FLAG_DISABLE_DRIVER);
 					}
 					break;
 				default:

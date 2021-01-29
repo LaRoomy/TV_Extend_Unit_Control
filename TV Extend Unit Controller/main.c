@@ -238,6 +238,9 @@ int main(void)
 			}
 			if(checkExecutionFlag(FLAG_DISABLE_DRIVER))
 			{
+				// wait to stop the motor
+				longDelay(200);
+				
 				// disable the drivers to save energy
 				EnableApplianceDriver(FALSE);
 				clearExecutionFlag(FLAG_DISABLE_DRIVER);

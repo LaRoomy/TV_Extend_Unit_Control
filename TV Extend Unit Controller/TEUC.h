@@ -42,6 +42,7 @@ void TVDriveReachedFrontPosition();
 #include "Movement Control/tvUnitDriver.h"
 #include "Movement Control/cdUnitDriver.h"
 
+void EnableApplianceDriver(BOOL enable);
 BOOL StartApplianceDrive();
 void EmergencyStop(uint8_t reason);
 
@@ -171,9 +172,9 @@ BOOL isDriveInProgress()
 
 void ControlDriveProcess()
 {
-	if(maintenanceDriveActive)
+	if(maintenanceDriveActive != 0)
 	{
-		void check_maintenance_drive_stop_condition();
+		check_maintenance_drive_stop_condition();
 	}
 	else
 	{
@@ -596,6 +597,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			moveLeftDrive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_CD_LEFT_OPEN)
@@ -605,6 +607,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			moveLeftDrive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_CD_RIGHT_CLOSE)
@@ -614,6 +617,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			moveRightDrive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_CD_RIGHT_OPEN)
@@ -623,6 +627,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			moveRightDrive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_LINEAR_IN)
@@ -632,6 +637,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			move_linear_drive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_LINEAR_OUT)
@@ -641,6 +647,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			move_linear_drive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_TILT_IN)
@@ -650,6 +657,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			move_tilt_drive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 	else if(maintenanceDriveActive == MAINTENANCEDRIVETYPE_TV_TILT_OUT)
@@ -659,6 +667,7 @@ void check_maintenance_drive_stop_condition()
 		{
 			move_tilt_drive(STOP);
 			maintenanceDriveActive = FALSE;
+			setExecutionFlag(FLAG_DISABLE_DRIVER);
 		}
 	}
 }
