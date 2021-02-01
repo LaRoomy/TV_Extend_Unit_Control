@@ -104,7 +104,9 @@ int main(void)
 
 			if(!(TOUCHBUTTON_PIN & (1<<TOUCHBUTTON_SENSE)))
 			{
+				// block the execution of the touch-button for 4 seconds
 				switch_preventer = TRUE;
+				switchPreventCounter = 0;
 
 				if(!StartApplianceDrive())
 				{
@@ -138,7 +140,17 @@ int main(void)
 		{
 			// reset global control parameter
 			OneSecond_event = DISABLE;
-			switch_preventer = FALSE;
+
+			// control the switch-preventer to block double-execution
+			if(switch_preventer)
+			{
+				if(switchPreventCounter >= 4)
+				{
+					switch_preventer = FALSE;
+					switchPreventCounter = 0;
+				}
+				switchPreventCounter++;
+			}
 		}
 		if(HalfSecond_event)
 		{

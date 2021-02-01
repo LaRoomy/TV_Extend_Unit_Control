@@ -308,67 +308,7 @@ void onPropertyStateRequest(volatile char* data)
 		dataOut[1] = 'S';
 		dataOut[2] = 'C';
 //****************************************************************************************************************
-		if(type == PROPERTY_TYPE_RGBSELECTOR)
-		{
-			// not implemented
-		}
-//****************************************************************************************************************
-		else if(type == PROPERTY_TYPE_EXTLEVELSELECTOR)
-		{
-			// not implemented
-		}
-//****************************************************************************************************************
-		else if(type == PROPERTY_TYPE_SIMPLETIMESELECTOR)
-		{
-			char carry[3];
-
-			// Property ID
-			dataOut[3] = data[1];
-			dataOut[4] = data[2];
-			dataOut[5] = data[3];
-
-#ifndef TIMESELECTSTRUCT_SINGLE_STATE
-			// retrieve state index (if there are more than one elements of this type)
-			uint8_t stateIndex = getPropertyState(propertyID);
-#endif
-
-#ifdef TIMESELECTSTRUCT_SINGLE_STATE
-			x8BitValueTo3CharBuffer(carry, TimeSelectorState.timeSetterIndex);
-#else
-			x8BitValueTo3CharBuffer(carry, TimeSelectorState[stateIndex].timeSetterIndex);
-#endif
-			dataOut[6] = carry[2];
-
-#ifdef TIMESELECTSTRUCT_SINGLE_STATE
-			x8BitValueTo3CharBuffer(carry, TimeSelectorState.hour);
-#else
-			x8BitValueTo3CharBuffer(carry, TimeSelectorState[stateIndex].hour);
-#endif
-			dataOut[7] = carry[1];
-			dataOut[8] = carry[2];
-
-#ifdef TIMESELECTSTRUCT_SINGLE_STATE
-			x8BitValueTo3CharBuffer(carry, TimeSelectorState.minute);
-#else
-			x8BitValueTo3CharBuffer(carry, TimeSelectorState[stateIndex].minute);
-#endif
-			dataOut[9] = carry[1];
-			dataOut[10] = carry[2];
-
-			// set activity status
-			dataOut[11] = '1';			// temporary placeholder! (enabled state)
-
-			dataOut[12] = '\0';			// delimiter
-
-			HMxx_SendData(dataOut);
-		}
-		//****************************************************************************************************************
-		else if(type == PROPERTY_TYPE_TIMEFRAMESELECTOR)
-		{
-			// not implemented
-		}
-		//****************************************************************************************************************
-		else if(type == PROPERTY_TYPE_NAVIGATOR)
+		if(type == PROPERTY_TYPE_NAVIGATOR)
 		{
 			// Property ID
 			dataOut[3] = data[1];

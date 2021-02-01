@@ -413,10 +413,7 @@ void control_drive_single()
 
 				tv_unit_current_drive_mode = DRIVEMODE_NONE;
 
-				
-
 				updateTVUnitPosition();
-				//updateDevicePropertyFromAppliancePosition();
 
 				TVDriveReachedBackPosition();
 			}

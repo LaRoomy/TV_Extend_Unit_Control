@@ -56,6 +56,7 @@ BOOL executeCurrentDriveAsSecurityDrive;
 BOOL deviceHeaderChanged;
 
 uint8_t currentMonitorUpdateCounter;
+uint8_t switchPreventCounter;
 
 volatile uint8_t executionFlags;
 volatile uint8_t errorFlags;
@@ -71,6 +72,7 @@ void InitGlobalValues()
 	currentMonitorUpdateCounter = 0;
 	executionFlags = 0;
 	errorFlags = 0;
+	switchPreventCounter = 0;
 
 	executeCurrentDriveAsSecurityDrive = FALSE;
 	maintenanceDriveActive = FALSE;

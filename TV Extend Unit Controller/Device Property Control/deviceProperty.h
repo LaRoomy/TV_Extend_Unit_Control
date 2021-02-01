@@ -312,7 +312,7 @@ typedef struct _PROPTERTYGROUPS {
 // if Group(s) are desired, declare it here:
 PROPTERTYGROUPS propertyGroups[PROPERTY_GROUP_AMOUNT] = {
 	{AUTO_INOUT_GROUP_ID, IMAGE_ID_PROPERTYGROUP_LRSTYLE, "Automatik", "Automatic", {22,23,24,0,0}},
-	{FREEDRIVE_INOUT_GROUP_ID, IMAGE_ID_TOOL_LRSTYLE, "Freie Bewegung", "Free Drive", {25,26,27,28,0}}
+	{FREEDRIVE_INOUT_GROUP_ID, IMAGE_ID_TOOL_LRSTYLE, "Wartung", "Maintenance", {25,26,27,28,0}}
 };
 	// NOTE:	Since the strings and the transmission process is using the ASCII Codepage, Multibyte character like ä,ö,ü or ß are not supported.
 	//			To use these character in German language, some rarely used characters will be substituted (only in German language), these character are then not supported anymore.
