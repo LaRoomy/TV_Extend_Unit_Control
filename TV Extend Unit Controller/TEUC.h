@@ -497,10 +497,11 @@ void TVDriveReachedFrontPosition()
 
 void updateMotorCurrentValues()
 {
-	linearDriveCurrentValue = ADC_ReadAverage(LINEAR_DRIVE_CURRENTSENSOR_ADC);
-	tiltDriveCurrentValue = ADC_ReadAverage(TILT_DRIVE_CURRENTSENSOR_ADC);
-	coverDriveLeftCurrentValue = ADC_ReadAverage(COVER_DRIVE_LEFT_CURRENTSENSOR_ADC);
-	coverDriveRightCurrentValue = ADC_ReadAverage(COVER_DRIVE_RIGHT_CURRENTSENSOR_ADC);
+	// NOTE: invert the values!
+	linearDriveCurrentValue = 1024 - ADC_ReadAverage(LINEAR_DRIVE_CURRENTSENSOR_ADC);
+	tiltDriveCurrentValue = 1024 - ADC_ReadAverage(TILT_DRIVE_CURRENTSENSOR_ADC);
+	coverDriveLeftCurrentValue = 1024 - ADC_ReadAverage(COVER_DRIVE_LEFT_CURRENTSENSOR_ADC);
+	coverDriveRightCurrentValue = 1024 - ADC_ReadAverage(COVER_DRIVE_RIGHT_CURRENTSENSOR_ADC);
 }
 
 uint16_t adcValueFromIndex(uint8_t index)
