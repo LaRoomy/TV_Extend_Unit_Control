@@ -43,7 +43,7 @@
 #define PROPERTY_TYPE_RGBSELECTOR			6
 #define PROPERTY_TYPE_EXTLEVELSELECTOR		7
 #define PROPERTY_TYPE_SIMPLETIMESELECTOR	8
-#define PROPERTY_TYPE_TIMEELAPSESELECTOR	9
+#define PROPERTY_TYPE_UNLOCK_CONTROL		9
 #define PROPERTY_TYPE_TIMEFRAMESELECTOR		10
 #define PROPERTY_TYPE_NAVIGATOR				11
 #define PROPERTY_TYPE_BARGRAPHDISPLAY		12
@@ -279,9 +279,9 @@ struct {
 			- Type-ID: 0x08 (8)
 			- State: Index of Time-Struct position (containing the state)
 
-		9. Type "Elapse Time Selector"
+		9. Type "Unlock Control"
 			- Type-ID: 0x09 (9)
-			- State: Index of Time-Struct position (containing the state)
+			- State: ???? TODO!
 
 		10. Type "Time-Frame Selector"
 			- Type-ID: 0x0A (10)
