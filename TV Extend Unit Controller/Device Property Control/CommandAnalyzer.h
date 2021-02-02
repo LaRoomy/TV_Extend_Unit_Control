@@ -844,6 +844,9 @@ void checkAppToDeviceNotification(volatile char* data)
 		{
 			// reset the active multi-complex ID
 			activeMultiComplexPropertyID = 0;
+
+			// schedule a position and property update
+			setExecutionFlag(FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY);
 		}
 	}
 }
