@@ -786,14 +786,17 @@ void onBindingRequest(volatile char* data)
 	else
 	{
 		char password[11];
+		password[10] = '\0';
 
 		// record password
-		for(uint8_t i = 0; i < 10; i++)
+		for(uint8_t i = 0; i < 11; i++)
 		{
 			password[i] = data[i + 1];			
 
 			if((data[i + 1] == '>')&&(data[i + 2] == '\0'))
 			{
+				// TODO: here is something wrong: the passkey could be at least 10 character long -> but the passkey will be treated as invalid if this is the case
+				
 				password[i] = '\0';
 				break;
 			}
