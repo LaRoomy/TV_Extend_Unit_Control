@@ -1,42 +1,34 @@
-/*
- * GlobalValueCtrl.h
- *
- * Created: 23.11.2020 07:22:45
- *  Author: Hans Philipp Zimmermann
- */ 
-
-
 #ifndef GLOBALVALUECTRL_H_
 #define GLOBALVALUECTRL_H_
 
 // execution flags:
-#define FLAG_UPDATE_APPLIANCE_POSITION					0x01
-#define FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY		0x02
-#define FLAG_COVERDRIVE_START_CLOSE						0x04
-#define FLAG_TVDRIVE_START_MOVE_OUT						0x08
-#define FLAG_TVDRIVE_START_SECUREPOSITION				0x10
-#define FLAG_DISABLE_DRIVER								0x20
+#define FLAG_UPDATE_APPLIANCE_POSITION 0x01
+#define FLAG_UPDATE_APPLIANCE_POSITION_AND_PROPERTY 0x02
+#define FLAG_COVERDRIVE_START_CLOSE 0x04
+#define FLAG_TVDRIVE_START_MOVE_OUT 0x08
+#define FLAG_TVDRIVE_START_SECUREPOSITION 0x10
+#define FLAG_DISABLE_DRIVER 0x20
 
 // error flags:
-#define FLAG_DOORSENSOR_ERROR							0x01
+#define FLAG_DOORSENSOR_ERROR 0x01
 // ...
-#define FLAG_TVDRIVE_TILT_SENSOR_ERROR					0x10
-#define FLAG_TVDRIVE_LIN_SENSOR_ERROR					0x20
-#define FLAG_CDDRIVE_RIGHT_SENSOR_ERROR					0x40
-#define FLAG_CDDRIVE_LEFT_SENSOR_ERROR					0x80
+#define FLAG_TVDRIVE_TILT_SENSOR_ERROR 0x10
+#define FLAG_TVDRIVE_LIN_SENSOR_ERROR 0x20
+#define FLAG_CDDRIVE_RIGHT_SENSOR_ERROR 0x40
+#define FLAG_CDDRIVE_LEFT_SENSOR_ERROR 0x80
 
-#define EMERGENCY_STOP_REASON_DOORS_NOT_CLOSED			1
-#define EMERGENCY_STOP_REASON_USER_STOPPED				2
+#define EMERGENCY_STOP_REASON_DOORS_NOT_CLOSED 1
+#define EMERGENCY_STOP_REASON_USER_STOPPED 2
 
 // maintenance drive types
-#define MAINTENANCEDRIVETYPE_CD_RIGHT_OPEN				0x01
-#define MAINTENANCEDRIVETYPE_CD_RIGHT_CLOSE				0x02
-#define MAINTENANCEDRIVETYPE_CD_LEFT_OPEN				0x04
-#define MAINTENANCEDRIVETYPE_CD_LEFT_CLOSE				0x08
-#define MAINTENANCEDRIVETYPE_TV_TILT_OUT				0x10
-#define MAINTENANCEDRIVETYPE_TV_TILT_IN					0x20
-#define MAINTENANCEDRIVETYPE_TV_LINEAR_OUT				0x40
-#define MAINTENANCEDRIVETYPE_TV_LINEAR_IN				0x80
+#define MAINTENANCEDRIVETYPE_CD_RIGHT_OPEN 0x01
+#define MAINTENANCEDRIVETYPE_CD_RIGHT_CLOSE 0x02
+#define MAINTENANCEDRIVETYPE_CD_LEFT_OPEN 0x04
+#define MAINTENANCEDRIVETYPE_CD_LEFT_CLOSE 0x08
+#define MAINTENANCEDRIVETYPE_TV_TILT_OUT 0x10
+#define MAINTENANCEDRIVETYPE_TV_TILT_IN 0x20
+#define MAINTENANCEDRIVETYPE_TV_LINEAR_OUT 0x40
+#define MAINTENANCEDRIVETYPE_TV_LINEAR_IN 0x80
 
 uint8_t deviceBindingStatus;
 char deviceBindingPasskey[11];
@@ -50,7 +42,7 @@ uint16_t tiltDriveCurrentValue;
 uint16_t coverDriveLeftCurrentValue;
 uint16_t coverDriveRightCurrentValue;
 
-uint8_t	currentAppliancePosition;
+uint8_t currentAppliancePosition;
 
 BOOL executeCurrentDriveAsSecurityDrive;
 BOOL deviceHeaderChanged;
@@ -62,7 +54,6 @@ volatile uint8_t executionFlags;
 volatile uint8_t errorFlags;
 
 volatile BOOL maintenanceDriveActive;
-
 
 void InitGlobalValues()
 {
@@ -85,9 +76,8 @@ void InitGlobalValues()
 	coverDriveRightCurrentValue = 1023;
 	coverDriveLeftCurrentValue = 1023;
 
-	for(uint8_t i = 0; i < 11; i++)
+	for (uint8_t i = 0; i < 11; i++)
 		deviceBindingPasskey[i] = '\0';
-
 }
 
 void setExecutionFlag(uint8_t flag)
@@ -124,13 +114,4 @@ void eraseExecutionMovementFlags()
 {
 	executionFlags &= (~0x1C);
 }
-
-
-
-// TODO: save necessary values to eeprom
-//			- deviceBindingStatus
-//			- passkey
-
-
-
 #endif /* GLOBALVALUECTRL_H_ */

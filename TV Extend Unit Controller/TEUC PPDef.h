@@ -1,9 +1,6 @@
 /*
  * TEUC_PPDef.h
  *
- * Created: 17.11.2020 08:02:42
- *  Author: Hans Philipp Zimmermann
- *
  *	Pin Definition and Initialization for the TV Extend Unit
  *
  */ 

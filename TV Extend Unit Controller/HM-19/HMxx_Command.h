@@ -1,15 +1,3 @@
-/*
-	HMxx_Command.h
-	
-	Author: Hans Philipp Zimmermann
-	(C) 2017 All Rights reserved
-	
-	NOTE:	check "transmission_data_available" at first before checking "transmission_complete"
-			to catch all notifications!
-
-	recent changes: 23.06.2020
-*/
-
 #ifndef HMxx_COMMAND_H_
 #define HMxx_COMMAND_H_
 
@@ -83,9 +71,6 @@ uint8_t _HMxx_role;
 void HMxx_Init()
 {
 	Usart0_Init(USART0_BAUD);
-	
-	//HMxx_enableNotifications(TRUE);
-	//longDelay(100);
 	
 	_HMxx_isASleep = FALSE;
 	_HMxx_isConnected = FALSE;
@@ -321,60 +306,4 @@ void HMxx_SendDataUnlimited(volatile char* data){
 		counter++;
 	}
 }
-
-
-/*
-// temp:
-void HM_10_StartupConfig()
-{
-	USART_Write('A');
-	USART_Write('T');
-	USART_Write('+');
-	USART_Write('N');
-	USART_Write('A');
-	USART_Write('M');
-	USART_Write('E');
-	USART_Write('L');
-	USART_Write('a');
-	USART_Write('R');
-	USART_Write('o');
-	USART_Write('o');
-	USART_Write('m');
-	USART_Write('y');
-	USART_Write(' ');
-	USART_Write('C');
-	USART_Write('T');
-	USART_Write('X');
-	
-	_delay_ms(100);
-	
-	USART_Write('A');
-	USART_Write('T');
-	USART_Write('+');
-	USART_Write('T');
-	USART_Write('Y');
-	USART_Write('P');
-	USART_Write('E');
-	//if(isUsedwithWindows)USART_Write('3');
-	//else USART_Write('0');
-	USART_Write('0');
-
-	_delay_ms(100);
-	
-	USART_Write('A');
-	USART_Write('T');
-	USART_Write('+');
-	USART_Write('N');
-	USART_Write('O');
-	USART_Write('T');
-	USART_Write('I');
-	USART_Write('1');
-
-	//_delay_ms(50);
-	
-	// wait and skip all respond transmissions
-	_delay_ms(400);
-	Usart0_Clear_RX_Buffer();
-}*/
-
 #endif /* HMxx_COMMAND_H_ */
